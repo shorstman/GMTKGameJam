@@ -1,4 +1,5 @@
 import pygame
+from Player import Player
 from pygame.locals import *
 
 NAME = "GMTKGameJam"
@@ -15,22 +16,27 @@ def main():
     window.blit(background, (0,0))
     pygame.display.flip()
 
+    player = Player()
+
     x = 0
     y = 0
-    moveX = 10
-    moveY = 10
+    moveX = 2
+    moveY = 2
     while True:
         for event in pygame.event.get():
             if event.type == QUIT:
                 return
+        keys = pygame.key.get_pressed()
+        if keys[pygame.K_UP]:
+            player.moveY(-3)
+        if keys[pygame.K_DOWN]:
+            player.moveY(3)
+        if keys[pygame.K_LEFT]:
+            player.moveX(-3)
+        if keys[pygame.K_RIGHT]:
+            player.moveX(3)
         window.blit(background, (0,0))
-        pygame.draw.rect(window, (0, 0, 255), (x,y,100,50))
-        x += moveX
-        y += moveY
-        if(x > 800 or x < 0):
-            moveX = moveX*-1
-        if(y > 550 or y < 0):
-            moveY = moveY*-1
+        player.drawPlayer(window)
         pygame.display.update()
 
 if __name__ == "__main__": main()
