@@ -126,13 +126,13 @@ def main():
                         activeInterface = "pause"
                     #Check if the z key is pressed
                     if event.key == pygame.K_z:
+                        if(player.orientation == 1):
+                            attackRect = pygame.Rect(player.rect.x+player.rect.width, player.rect.y, 38, player.rect.height)
+                        else:
+                            attackRect = pygame.Rect(player.rect.x - 38, player.rect.y, 38, 32)
+                        player.smallAttackFrame = 1
                         for enemy in enemies:
                             #If an enemy is in range call smallAttack from the player
-                            if(player.orientation == 1):
-                                attackRect = pygame.Rect(player.rect.x+player.rect.width, player.rect.y, 38, player.rect.height)
-                            else:
-                                attackRect = pygame.Rect(player.rect.x - 38, player.rect.y, 38, 32)
-                            player.smallAttackFrame = 1
                             if(enemy.rect.colliderect(attackRect)):
                                 enemy.damage(20, player)
                     #Check if the left shift is pressed
@@ -158,7 +158,7 @@ def main():
                             for obstacle in obstacles:
                                 if(attackRect.colliderect(obstacle.rect)):
                                         difference = attackRect.x - obstacle.rect.x
-                                        attackRect.x = obstacl.rect.x
+                                        attackRect.x = obstacle.rect.x
                                         attackRect.width -= difference
 
 
