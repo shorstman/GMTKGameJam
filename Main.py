@@ -22,6 +22,8 @@ def loadPlayerSprites():
     sprites["right"] = [pygame.image.load("Base_Sprites\\PL_BaseR.png")]
     for sprite in os.listdir("Hover_Right"):
         sprites["right"].append(pygame.image.load("Hover_Right\\" + sprite))
+    for sprite in os.listdir("Attack_Basic"):
+        sprites["smallAttack"].append(pygame.image.load("Attack_Basic\\" + sprite))
     os.chdir("..")
     os.chdir("..")
     return sprites
