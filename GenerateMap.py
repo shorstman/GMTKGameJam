@@ -18,7 +18,7 @@ class GenerateMap():
         self.steps = steps
         self.map = self.generateMap()
 
-    def initializeMap(cellMap):
+    def initializeMap(self, cellMap):
         for x in range(0, self.width):
             cellMap.append([])
             for y in range(0, self.height):
@@ -28,7 +28,7 @@ class GenerateMap():
                     cellMap[x].append(False)
         return cellMap
 
-    def doStep(oldMap):
+    def doStep(self, oldMap):
         newMap = copy.deepcopy(oldMap)
         for x in range(0, len(newMap)):
             for y in range(0, len(newMap[x])):
@@ -46,7 +46,7 @@ class GenerateMap():
         return newMap
 
 
-    def countAliveNeighbors(cellMap, x, y):
+    def countAliveNeighbors(self, cellMap, x, y):
         count = 0
         for i in range(-1, 2):
             for a in range(-1, 2):
@@ -62,7 +62,7 @@ class GenerateMap():
 
         return count
 
-    def generateMap():
+    def generateMap(self):
         cellMap = []
         cellMap = initializeMap(cellMap)
         for step in range(0, self.steps):
@@ -80,3 +80,12 @@ class GenerateMap():
                 elif y == len(cellMap[x]) - 1:
                     cellMap[x][y] = False
         return cellMap
+
+    def getObstacleCount(self):
+        obstacleCount = 0
+        for x in range(0, len(self.map)):
+            for y in range(0, len(self.map[x])):
+                if(self.map[x][y]):
+                    obstacleCount += 1
+
+        return obstacleCount
