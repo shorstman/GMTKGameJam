@@ -1,17 +1,16 @@
 import pygame
+import threading
 
 class Player():
     def __init__(self, x, y):
-        self.health = 100
-        self.sneak = 0
+        self.maxHealth = 100
+        self.health = self.maxHealth
         self.rect = pygame.Rect(x, y, 34, 64)
         self.dx = 0
         self.dy = 0
         self.onGround = False
-        self.weight = 1
         self.orientation = 1
         self.time = 0
-        self.jumps = 0
         self.jumping = 0
         self.vulnerable = False
         self.vulnerability = 1
@@ -20,12 +19,14 @@ class Player():
         self.damageCooldownTime = 0
         self.sprite = "idle"
         self.hoverSprite = 1
+        self.smallAttackFrame = 0
+        self.jumpFrame = 0
 
     def moveX(self, distance):
         #Move 'distance' in the x direction
         self.dx = distance
         self.rect.x += self.dx
-        if(self.rect.x > 928 - self.rect.width):
+        if(self.rect.x > 928 +- self.rect.width):
             self.rect.x = 928 - self.rect.width
         if(self.rect.x < 0):
             self.rect.x = 0
@@ -54,8 +55,9 @@ class Player():
         if(self.hoverSprite >= len(self.sprites[self.sprite])):
             self.hoverSprite = 1
         window.blit(self.sprites[self.sprite][0], (self.rect.x, self.rect.y))
-        window.blit(self.sprites[self.sprite][int(self.hoverSprite)], (self.rect.x, self.rect.y))
-        self.hoverSprite += .05
+        if(self.jumping == 0):
+            window.blit(self.sprites[self.sprite][int(self.hoverSprite)], (self.rect.x, self.rect.y))
+            self.hoverSprite += .05
 
     def checkObstacleCollisions(self, colliders):
         """
@@ -90,3 +92,8 @@ class Player():
             collided = True
 
         return collided
+
+    def smallAttack(self):
+        while int(self.smallAttackFrame) < len(self.sprites["leftSmallAttack"]):
+            self.smallAttackFrame += .0004
+        self.smallAttackFrame = 0

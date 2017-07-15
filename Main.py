@@ -6,6 +6,7 @@ from pygame.locals import *
 import time
 import math
 import os
+from _thread import start_new_thread
 
 NAME = "GMTKGameJam"
 dirSymbol = "/"
@@ -22,13 +23,30 @@ def loadPlayerSprites():
         sprites["left"].append(pygame.image.load("Hover_Left" +dirSymbol +sprite))
     sprites["right"] = [pygame.image.load("Base_Sprites" +dirSymbol +"PL_BaseR.png")]
     for sprite in os.listdir("Hover_Right"):
-        sprites["right"].append(pygame.image.load("Hover_Right" +dirSymbol +sprite))
-    sprites["smallAttack"] = []
-    for sprite in os.listdir("Attack_Basic"):
-        sprites["smallAttack"].append(pygame.image.load("Attack_Basic" +dirSymbol +sprite))
+        sprites["right"].append(pygame.image.load("Hover_Right" +dirSymbol + sprite))
+    sprites["leftSmallAttack"] = []
+    sprites["rightSmallAttack"] = []
+    for sprite in range(1, len(os.listdir("Attack_Basic")) + 1):
+        sprites["rightSmallAttack"].append(pygame.image.load("Attack_Basic" +dirSymbol + "Atk_Base" + str(sprite) + ".png"))
+        sprites["leftSmallAttack"].append(pygame.transform.flip(pygame.image.load("Attack_Basic" +dirSymbol + "Atk_Base" + str(sprite) + ".png"), True, False))
+    sprites["jump"] = []
+    for sprite in os.listdir("Jump"):
+        sprites["jump"].append(pygame.image.load("Jump" + dirSymbol + sprite))
     os.chdir("..")
     os.chdir("..")
     return sprites
+
+def playerAttackAnimation(window, player):
+    if(player.smallAttackFrame > 0 and player.smallAttackFrame < len(player.sprites["rightSmallAttack"]) - .7):
+        player.smallAttackFrame += .7
+        if(player.orientation == 1):
+            player.sprite = "right"
+            window.blit(player.sprites["rightSmallAttack"][int(player.smallAttackFrame)], (player.rect.x, player.rect.y))
+        else:
+            player.sprite = "left"
+            window.blit(player.sprites["leftSmallAttack"][int(player.smallAttackFrame)], (player.rect.x - 38, player.rect.y))
+    else:
+        player.smallAttackFrame = 0
 
 def main():
     #Initialize the window
@@ -62,6 +80,8 @@ def main():
     while True:
         player.time += 1
         player.sprite = "idle"
+        #Refresh the background
+        window.blit(background, (0,0))
         for event in pygame.event.get():
             if event.type == QUIT:
                 return
@@ -71,9 +91,10 @@ def main():
                     for enemy in enemies:
                         #If an enemy is in range call smallAttack from the player
                         if(player.orientation == 1):
-                            attack = pygame.Rect(player.rect.x+player.rect.width, player.rect.y, 38, player.rect.height)
+                            attackRect = pygame.Rect(player.rect.x+player.rect.width, player.rect.y, 38, player.rect.height)
                         else:
-                            attack = pygame.Rect(player.rect.x - 38, player.rect.y, 38, 32)
+                            attackRect = pygame.Rect(player.rect.x - 38, player.rect.y, 38, 32)
+                        player.smallAttackFrame = 1
                         if(enemy.rect.colliderect(attack)):
                             enemy.damage(20)
                 #Check if the left shift is pressed
@@ -127,27 +148,6 @@ def main():
         #Check collisions on y axis
         player.checkObstacleCollisions(obstacles)
 
-        #If the player is on the ground reset the jump and time values
-        if(player.onGround):
-            player.time = 0
-            player.jumping = 0
-
-        #Do vulnerability increase/decay calculations
-        if(player.vulnerable):
-            currentTime = int(time.time() - startTime)
-            player.vulnerability = 0.1*currentTime + 1
-        else:
-            if(player.vulnerability > 1):
-                currentTime = int(time.time() - startTime)
-                player.vulnerability = -0.05*currentTime + vulnerabilityDecay
-
-
-        #Refresh the background
-        window.blit(background, (0,0))
-
-        #Draw the player
-        player.drawPlayer(window)
-
         for enemy in enemies:
             #Check if player is on the ground for jump attack
             if(not player.onGround):
@@ -165,13 +165,11 @@ def main():
                 #Get the distance between the enemy and the player
                 playerDist = math.sqrt(math.pow(player.rect.x - enemy.rect.x, 2)
                                         + math.pow(player.rect.y - enemy.rect.y, 2))
+
                 #If the player is within aggro distance of the enemy, run aggro action
                 if(playerDist <= enemy.aggrodist and not enemy.aggro):
                     enemy.aggroAction(player)
                     enemy.aggro = True
-                print(enemy.interruptable)
-                if(not enemy.interruptable):
-                    stopper= input()
                 if(enemy.aggro):
                     enemy.aggroAction(player)
                     if(playerDist > enemy.aggrodist + 100 and enemy.interruptable):
@@ -184,6 +182,32 @@ def main():
                 if(enemy.onGround):
                     enemy.time = 0
                 enemy.drawEnemy(window)
+
+
+        if(player.jumping > 0):
+            player.jumpFrame += 1
+            if(player.jumpFrame >= len(player.sprites["jump"])):
+                player.jumpFrame = 1
+            window.blit(player.sprites["jump"][int(player.jumpFrame)], (player.rect.x, player.rect.y))
+
+        #If the player is on the ground reset the jump and time values
+        if(player.onGround):
+            player.time = 0
+            player.jumping = 0
+
+        playerAttackAnimation(window, player)
+
+        #Do vulnerability increase/decay calculations
+        if(player.vulnerable):
+            currentTime = int(time.time() - startTime)
+            player.vulnerability = 0.1*currentTime + 1
+        else:
+            if(player.vulnerability > 1):
+                currentTime = int(time.time() - startTime)
+                player.vulnerability = -0.05*currentTime + vulnerabilityDecay
+
+        #Draw the player
+        player.drawPlayer(window)
 
         #Draw the obstacles
         for obstacle in obstacles:

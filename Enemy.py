@@ -101,7 +101,6 @@ class Chomper(Enemy):
         #TODO: Make the directionality of this more complex once we have sprites for this
         #Calculate how long it has been since the start time
         currentTime = int(time.time() - self.chargeStart)
-        print(currentTime)
         if(not self.aggro):
             #Get the start time to calculate 3 seconds
             self.chargeStart = time.time()
@@ -121,6 +120,7 @@ class Chomper(Enemy):
             if(abs(self.rect.x - self.startX) > 150):
                 self.chargeStart = time.time()
                 self.interruptable = True
+                self.aggro = False
 
 class Spinner(Enemy):
     def aggroAction(self, player):
