@@ -1,6 +1,7 @@
 from Player import Player
 from Obstacle import Obstacle
 from Enemy import *
+from UI import UIElement
 import pygame
 from pygame.locals import *
 import time
@@ -65,8 +66,13 @@ def main():
     window.blit(background, (0,0))
     pygame.display.flip()
 
-    activeInterface = "game"
+    activeInterface = "menu"
+    menu = []
+    menu.append(UIElement(100, 100, 100, 100, "game"))
 
+    pauseMenu = []
+    pauseMenu.append(UIElement(100, 100, 50, 100, "game"))
+    pauseMenu.append(UIElement(100, 200, 50, 100, "menu"))
     #Create the player object
     player = Player(0, 0)
     player.sprites = loadPlayerSprites()
@@ -86,6 +92,27 @@ def main():
             for event in pygame.event.get():
                 if event.type == QUIT:
                     return
+                if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
+                    mousePos = pygame.mouse.get_pos()
+                    for element in menu:
+                        if(element.rect.collidepoint(mousePos)):
+                            activeInterface = element.clicked()
+
+            window.blit(background, (0,0))
+            for element in menu:
+                element.drawElement(window)
+        elif(activeInterface == "pause"):
+            for event in pygame.event.get():
+                if event.type == QUIT:
+                    return
+                if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
+                    mousePos = pygame.mouse.get_pos()
+                    for element in pauseMenu:
+                        if(element.rect.collidepoint(mousePos)):
+                            activeInterface = element.clicked()
+            window.blit(background, (0,0))
+            for element in pauseMenu:
+                element.drawElement(window)
         elif(activeInterface == "game"):
             player.time += 1
             player.sprite = "idle"
@@ -95,6 +122,8 @@ def main():
                 if event.type == QUIT:
                     return
                 if event.type == pygame.KEYDOWN:
+                    if event.key == pygame.K_ESCAPE:
+                        activeInterface = "pause"
                     #Check if the z key is pressed
                     if event.key == pygame.K_z:
                         for enemy in enemies:
