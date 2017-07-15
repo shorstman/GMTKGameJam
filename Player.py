@@ -8,10 +8,12 @@ class Player():
         self.dx = 0
         self.dy = 0
         self.onGround = False
-        self.weight = 1;
-        self.orientation = 1;
+        self.weight = 1
+        self.orientation = 1
         self.time = 0
         self.jumping = 0
+        self.vulnerable = False
+        self.vulnerability = 1
 
     def moveX(self, distance):
         #Move 'distance' in the x direction
@@ -22,17 +24,8 @@ class Player():
         if(self.rect.x < 0):
             self.rect.x = 0
 
-    def jump(self, distance, time):
-        #Move 'distance' in the y direction
-        self.dy = distance
-        self.rect.y += self.dy
-        if(self.rect.y > 600 - self.rect.height):
-            self.rect.y = 600 - self.rect.height
-        if(self.rect.y < 0):
-            self.rect.y = 0
-        self.onGround = False
-
     def moveY(self, distance):
+        #Do kinematics calculations for gravity
         self.dy = -distance + 0.1*self.time
         self.rect.y += self.dy
         self.onGround = False
@@ -43,6 +36,8 @@ class Player():
         pygame.draw.rect(window, (0, 0, 255), self.rect)
 
     def checkCollisions(self, colliders):
+        #TODO: Reformat this function so it returns a bool. This will make it easy to repurpose
+
         #Check if the player has collided with 'collider'
         if(self.dy > 0):
             self.onGround = False
@@ -53,6 +48,7 @@ class Player():
                 elif self.dx < 0:
                     self.rect.left = collider.rect.right
                 if self.dy > 0:
+                    #If the player is on top of an obstacle, set onGround to True
                     self.onGround = True
                     self.rect.bottom = collider.rect.top
                 elif self.dy < 0:
@@ -63,4 +59,5 @@ class Player():
 
     @staticmethod
     def smallAttack(enemy):
+        #Do damage to enemy
         enemy.health -= 50
