@@ -8,22 +8,24 @@ import math
 import os
 
 NAME = "GMTKGameJam"
+dirSymbol = "/"
 
 def loadPlayerSprites():
     #This loads all the sprite images for the player
-    os.chdir("sprites\\Player_Sprites")
+    os.chdir("sprites" +dirSymbol +"Player_Sprites")
     sprites = {}
-    sprites["idle"] = [pygame.image.load("Base_Sprites\\PL_BaseF.png")]
+    sprites["idle"] = [pygame.image.load("Base_Sprites" +dirSymbol +"PL_BaseF.png")]
     for sprite in os.listdir("Idle_Hover"):
-        sprites["idle"].append(pygame.image.load("Idle_Hover\\" + sprite))
-    sprites["left"] = [pygame.image.load("Base_Sprites\\PL_BaseL.png")]
+        sprites["idle"].append(pygame.image.load("Idle_Hover" +dirSymbol +sprite))
+    sprites["left"] = [pygame.image.load("Base_Sprites" +dirSymbol +"PL_BaseL.png")]
     for sprite in os.listdir("Hover_Left"):
-        sprites["left"].append(pygame.image.load("Hover_Left\\" + sprite))
-    sprites["right"] = [pygame.image.load("Base_Sprites\\PL_BaseR.png")]
+        sprites["left"].append(pygame.image.load("Hover_Left" +dirSymbol +sprite))
+    sprites["right"] = [pygame.image.load("Base_Sprites" +dirSymbol +"PL_BaseR.png")]
     for sprite in os.listdir("Hover_Right"):
-        sprites["right"].append(pygame.image.load("Hover_Right\\" + sprite))
+        sprites["right"].append(pygame.image.load("Hover_Right" +dirSymbol +sprite))
+    sprites["smallAttack"] = []
     for sprite in os.listdir("Attack_Basic"):
-        sprites["smallAttack"].append(pygame.image.load("Attack_Basic\\" + sprite))
+        sprites["smallAttack"].append(pygame.image.load("Attack_Basic" +dirSymbol +sprite))
     os.chdir("..")
     os.chdir("..")
     return sprites
@@ -190,4 +192,8 @@ def main():
         #Update the display
         pygame.display.update()
 
-if __name__ == "__main__": main()
+if __name__ == "__main__":
+    # OS detection for filepath stuff
+    if os.name == 'nt': # If we're using Windows
+        dirSymbol = "\\"
+    main()
