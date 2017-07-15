@@ -28,7 +28,7 @@ class Map():
         # GenerateMap()
         self.localMap = []
         self.localXMap = []
-        self.map = [[0,0,10,10],[100,200,100,100],[20,20,10,10],[300,300,100,100]]
+        self.map = [[0,0,10,10,40],[100,200,100,100,40],[20,20,10,10,40],[300,300,100,100,40]]
         self.mapObjects = []
         # Map block types:
             # 0: Wall
@@ -56,7 +56,7 @@ class Map():
         for i in range(0, len(self.localXMap)): # Iterate through all localXMap values
             if((self.localXMap[i][1] > self.yMin or self.localXMap[i][1] < self.yMax)): # If any given localXMap value is within the user's FOV Y bounds;
                 self.localMap.append(self.localXMap[i]) # Add that value to localMap
-                self.mapObjects.append(Obstacle(self.localMap[i][0],self.localMap[i][1],self.localMap[i][2],self.localMap[i][3],)) # Obstacle(x,y,w,h)
+                self.mapObjects.append(Obstacle(self.localMap[i][0],self.localMap[i][1],self.localMap[i][2],self.localMap[i][3],self.localMap[i][4])) # Obstacle(x,y,w,h)
         print(str(self.mapObjects))
 
     def setBounds(self):
