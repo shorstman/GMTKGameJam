@@ -2,9 +2,9 @@ import random
 import copy
 from PIL import Image
 
-aliveStart = 45
-width = 128
-height = 64
+aliveStart = 46
+height = 128
+width = 64
 deathLimit = 3
 birthLimit = 4
 steps = 2
@@ -58,12 +58,25 @@ def generateMap():
     cellMap = initializeMap(cellMap)
     for step in range(0, steps):
         cellMap = doStep(cellMap)
+
+    #Add a border around the map
+    for x in range(0, len(cellMap)):
+        for y in range(0, len(cellMap[x])):
+            if x == 0:
+                cellMap[x][y] = False
+            elif x == len(cellMap) - 1:
+                cellMap[x][y] = False
+            elif y == 0:
+                cellMap[x][y] = False
+            elif y == len(cellMap[x]) - 1:
+                cellMap[x][y] = False
     return cellMap
 
 obstacleMap = generateMap()
-output = Image.new('RGB', (width, height))
+output = Image.new('RGB', (height, width))
 
 imagable = []
+
 for x in range(0, len(obstacleMap)):
     for y in range(0, len(obstacleMap[x])):
         if(obstacleMap[x][y]):
