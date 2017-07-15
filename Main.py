@@ -28,41 +28,43 @@ def main():
     for x in range(1, 3):
         enemies.append(Enemy(x*100, 0))
     obstacles = []
-    for x in range(0, 29):
+    for x in range(0, 20):
         obstacles.append(Obstacle(x*32, 250, 32, 32))
 
     time = 0
     while True:
-        time += 1
+        player.time += 1
         for event in pygame.event.get():
             if event.type == QUIT:
                 return
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_z:
+                    for enemy in enemies:
+                        attack = pygame.Rect(player.rect.x+(19*player.orientation), player.rect.y, 19, 32)
+                        if(enemy.rect.colliderect(attack)):
+                            player.smallAttack(enemy)
 
         keys = pygame.key.get_pressed()
         #Movement
         if keys[pygame.K_LEFT]:
             player.orientation = -1
-            player.moveX(-3)
+            player.moveX(-1)
         if keys[pygame.K_RIGHT]:
             player.orientation = 1
-            player.moveX(3)
+            player.moveX(1)
 
         #Check collisions
         player.checkCollisions(obstacles)
         if keys[pygame.K_UP]:
             if(player.onGround):
-                player.moveY(50, time)
-        player.moveY(0, time)
+                player.jumping = 3
+                player.moveY(player.jumping)
+        player.moveY(player.jumping)
         player.checkCollisions(obstacles)
 
-        if keys[pygame.K_z]:
-            for enemy in enemies:
-                if(enemy.rect.colliderect(pygame.Rect(player.rect.x+(19*player.orientation), player.rect.y, 19, 32))):
-                    player.smallAttack(enemy)
-                    enemy.health
-
         if(player.onGround):
-            time = 0
+            player.time = 0
+            player.jumping = 0
 
         #Refresh the background
         window.blit(background, (0,0))
@@ -71,10 +73,15 @@ def main():
         player.drawPlayer(window)
 
         for enemy in enemies:
-            enemy.drawEnemy(window)
-            enemy.moveY(0, time)
-            enemy.checkCollisions(obstacles)
-
+            if(enemy.health <= 0):
+                enemy.kill()
+            else:
+                enemy.time += 1
+                enemy.drawEnemy(window)
+                enemy.moveY(0)
+                enemy.checkCollisions(obstacles)
+                if(enemy.onGround):
+                    enemy.time = 0
         #Draw the obstacles
         for obstacle in obstacles:
             obstacle.drawObstacle(window)

@@ -8,8 +8,8 @@ class Enemy():
         self.dx = 0
         self.dy = 0
         self.onGround = False
-        self.weight = 1;
         self.orientation = 1;
+        self.time = 0
 
     def moveX(self, distance):
         #Move 'distance' in the x direction
@@ -30,8 +30,8 @@ class Enemy():
             self.rect.y = 0
         self.onGround = False
 
-    def moveY(self, distance, time):
-        self.dy = -distance + 0.1*time
+    def moveY(self, distance):
+        self.dy = -distance + 0.1*self.time
         self.rect.y += self.dy
         self.onGround = False
 
@@ -58,3 +58,6 @@ class Enemy():
 
         self.dx = 0
         self.dy = 0
+
+    def kill(self):
+        del self

@@ -10,6 +10,8 @@ class Player():
         self.onGround = False
         self.weight = 1;
         self.orientation = 1;
+        self.time = 0
+        self.jumping = 0
 
     def moveX(self, distance):
         #Move 'distance' in the x direction
@@ -30,8 +32,8 @@ class Player():
             self.rect.y = 0
         self.onGround = False
 
-    def moveY(self, distance, time):
-        self.dy = -distance + 0.1*time
+    def moveY(self, distance):
+        self.dy = -distance + 0.1*self.time
         self.rect.y += self.dy
         self.onGround = False
 
@@ -62,4 +64,3 @@ class Player():
     @staticmethod
     def smallAttack(enemy):
         enemy.health -= 50
-        print(enemy.health)
