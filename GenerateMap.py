@@ -1,6 +1,15 @@
 
 class GenerateMap():
     def __init__(self, width, height, aliveStart, deathLimit, birthLimit, steps):
+        """
+        The settings for this should be
+        aliveStart = 46
+        height = 128
+        width = 64
+        deathLimit = 3
+        birthLimit = 4
+        steps = 2
+        """
         self.width = width
         self.height = height
         self.aliveStart = aliveStart
