@@ -2,6 +2,7 @@ from Player import Player
 from Obstacle import Obstacle
 from Enemy import *
 from UI import UIElement
+from Map import Map
 import pygame
 from pygame.locals import *
 import time
@@ -82,10 +83,9 @@ def main():
     for x in range(1, 2):
         enemies.append(Chomper(x*300, 0))
 
-    #Create obstacles
-    obstacles = []
-    for x in range(0, 29):
-        obstacles.append(Obstacle(x*32, 250, 32, 32))
+    # Create map object
+    level = Map(screenWidth,screenHeight)
+    obstacles = level.getObjectList() # If the player is out of bounds, update the obstacles
 
     while True:
         if(activeInterface == "menu"):
@@ -114,6 +114,9 @@ def main():
             for element in pauseMenu:
                 element.drawElement(window)
         elif(activeInterface == "game"):
+            if(level.inBounds(player.rect.x, player.rect.y)) > 0: # Check if the player is in bounds every loop
+                obstacles = level.getObjectList() # If the player is out of bounds, update the obstacles
+
             player.time += 1
             player.sprite = "idle"
             #Refresh the background
@@ -160,6 +163,10 @@ def main():
                                         difference = attackRect.x - obstacle.rect.x
                                         attackRect.x = obstacle.rect.x
                                         attackRect.width -= difference
+
+                    # If the c key is pressed
+                    if event.key == pygame.K_c:
+                        print("x: " +str(player.rect.x) +" y: " +str(player.rect.y)) # Print coordinates
 
 
             keys = pygame.key.get_pressed()
