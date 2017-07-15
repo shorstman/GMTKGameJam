@@ -74,8 +74,6 @@ class Chomper(Enemy):
     """
     This class inherits the functions from the enemy class. It is an enemy type
     that will wait for three seconds and then charge the player.
-    There is currently a bug that makes it run away from the player after
-    its first charge
     """
     def __init__(self, x, y):
         self.health = 100
@@ -89,7 +87,7 @@ class Chomper(Enemy):
         self.time = 0
         self.aggrodist = 100
         self.aggro = False
-        self.chargeStart = None
+        self.chargeStart = time.time()
         self.startX = 0
         self.color = (255, 0, 0)
         self.damageCooldown = False
@@ -98,28 +96,16 @@ class Chomper(Enemy):
         """
         This is triggered when the player enters the aggro distance of the enemy
         """
-        #If it is not already aggro'd
-        if(not self.aggro):
-            self.aggro = True
-            #Get the start time to calculate 3 seconds
-            self.chargeStart = time.time()
-            #Find the direction the player is in
-            if(player.rect.x > self.rect.x):
-                self.orientation = 1
-            else:
-                self.orientation = -1
-
-            #Get the starting x value so always charges the same distance
-            self.startX = self.rect.x
-
+        #TODO: Make the directionality of this more complex once we have sprites for this
         #Calculate how long it has been since the start time
         currentTime = int(time.time() - self.chargeStart)
+        print(currentTime)
         if(currentTime >= 3): #If it has been three seconds
             #Add the speed
             self.rect.x += self.speed*self.orientation
             #If it reaches 300 pixels from the starting point, stop
             if(abs(self.rect.x - self.startX) > 300):
-                self.aggro = False
+                self.chargeStart = time.time()
 
 class Spinner(Enemy):
     def aggroAction(self, player):

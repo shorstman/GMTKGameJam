@@ -158,20 +158,23 @@ def main():
             if(enemy.health <= 0):
                 enemy.kill()
             else:
-                #Draw enemy and to kinatmics calculations/check for collisions
-                enemy.time += 1
-                enemy.drawEnemy(window)
-                enemy.moveY(0)
-                enemy.checkObstacleCollisions(obstacles)
-                if(enemy.onGround):
-                    enemy.time = 0
-
                 #Get the distance between the enemy and the player
                 playerDist = math.sqrt(math.pow(player.rect.x - enemy.rect.x, 2)
                                         + math.pow(player.rect.y - enemy.rect.y, 2))
                 #If the player is within aggro distance of the enemy, run aggro action
                 if(playerDist <= enemy.aggrodist):
+                    enemy.aggro = True
+
+                if(enemy.aggro):
                     enemy.aggroAction(player)
+
+                #Draw enemy and to kinatmics calculations/check for collisions
+                enemy.time += 1
+                enemy.moveY(0)
+                enemy.checkObstacleCollisions(obstacles)
+                if(enemy.onGround):
+                    enemy.time = 0
+                enemy.drawEnemy(window)
 
         #Draw the obstacles
         for obstacle in obstacles:
