@@ -72,3 +72,6 @@ class Map():
     def debug(text,level):
         if(level >= debugLevel):
             print(text)
+
+    def subtract():
+        print(4 - 2)
