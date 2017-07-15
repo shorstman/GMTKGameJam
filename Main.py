@@ -133,8 +133,8 @@ def main():
                             else:
                                 attackRect = pygame.Rect(player.rect.x - 38, player.rect.y, 38, 32)
                             player.smallAttackFrame = 1
-                            if(enemy.rect.colliderect(attack)):
-                                enemy.damage(20)
+                            if(enemy.rect.colliderect(attackRect)):
+                                enemy.damage(20, player)
                     #Check if the left shift is pressed
                     if event.key == pygame.K_LSHIFT:
                         #Toggle on/off vulnerable ability
@@ -149,17 +149,17 @@ def main():
                     #If the x key is pressed
                     if event.key == pygame.K_x:
                         if(player.orientation == 1):
-                            attack = pygame.Rect(player.rect.x + player.rect.width, player.rect.y, 2000, player.rect.height)
+                            attackRect = pygame.Rect(player.rect.x + player.rect.width, player.rect.y, 2000, player.rect.height)
                             for obstacle in obstacles:
-                                if(attack.colliderect(obstacle.rect)):
-                                    attack.width = obstacle.rect.x - attack
+                                if(attackRect.colliderect(obstacle.rect)):
+                                    attackRect.width = obstacle.rect.x - attackRect.x
                         else:
-                            attack = pygame.Rect(player.rect.x - 2000, player.rect.y, 2000, player.rect.height)
+                            attackRect = pygame.Rect(player.rect.x - 2000, player.rect.y, 2000, player.rect.height)
                             for obstacle in obstacles:
-                                if(attack.colliderect(obstacle.rect)):
-                                        difference = attack.x - obstacle.rect.x
-                                        attack.x = obstacl.rect.x
-                                        attack.width -= difference
+                                if(attackRect.colliderect(obstacle.rect)):
+                                        difference = attackRect.x - obstacle.rect.x
+                                        attackRect.x = obstacl.rect.x
+                                        attackRect.width -= difference
 
 
             keys = pygame.key.get_pressed()
@@ -194,7 +194,7 @@ def main():
                                         player.rect.width, 16)
                     #If rectangle collides, do damage
                     if(enemy.rect.colliderect(attack)):
-                        enemy.damage(30)
+                        enemy.damage(30, player)
 
                 #If the enemy has zero health, remove it
                 if(enemy.health <= 0):

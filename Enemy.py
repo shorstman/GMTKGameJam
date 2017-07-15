@@ -20,6 +20,7 @@ class Enemy():
 
     def moveX(self, distance):
         #Move 'distance' in the x direction
+        print(distance)
         self.dx = distance
         self.rect.x += self.dx
 
@@ -28,7 +29,7 @@ class Enemy():
         self.rect.y += self.dy
         self.onGround = False
 
-    def damage(self, damage):
+    def damage(self, damage, attacker):
         """
         This function does damage to the enemy
         """
@@ -43,6 +44,11 @@ class Enemy():
             self.health -= damage
             self.damageCooldown = True
             self.damageCooldownTime = time.time()
+            if(attacker.rect.x > self.rect.x):
+                self.moveX(-10)
+            else:
+                self.moveX(10)
+            self.moveY(3)
 
     def drawEnemy(self, window):
         #Draw the player
@@ -115,7 +121,7 @@ class Chomper(Enemy):
             self.startX = self.rect.x
         if(currentTime >= 3): #If it has been three seconds
             #Add the speed
-            self.rect.x += self.speed*self.orientation
+            self.moveX(self.speed*self.orientation)
             #If it reaches 300 pixels from the starting point, stop
             if(abs(self.rect.x - self.startX) > 150):
                 self.chargeStart = time.time()
