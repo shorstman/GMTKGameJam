@@ -5,13 +5,31 @@ import pygame
 from pygame.locals import *
 import time
 import math
+import os
 
 NAME = "GMTKGameJam"
 
-def start():
+def loadPlayerSprites():
+    #This loads all the sprite images for the player
+    os.chdir("sprites\\Player_Sprites")
+    sprites = {}
+    sprites["idle"] = [pygame.image.load("Base_Sprites\\PL_BaseF.png")]
+    for sprite in os.listdir("Idle_Hover"):
+        sprites["idle"].append(pygame.image.load("Idle_Hover\\" + sprite))
+    sprites["left"] = [pygame.image.load("Base_Sprites\\PL_BaseL.png")]
+    for sprite in os.listdir("Hover_Left"):
+        sprites["left"].append(pygame.image.load("Hover_Left\\" + sprite))
+    sprites["right"] = [pygame.image.load("Base_Sprites\\PL_BaseR.png")]
+    for sprite in os.listdir("Hover_Right"):
+        sprites["right"].append(pygame.image.load("Hover_Right\\" + sprite))
+    os.chdir("..")
+    os.chdir("..")
+    return sprites
+
+def main():
     #Initialize the window
     pygame.init()
-    window = pygame.display.set_mode((928, 600))
+    window = pygame.display.set_mode((900, 600))
     pygame.display.set_caption(NAME)
 
     #Create the background object
@@ -25,6 +43,7 @@ def start():
 
     #Create the player object
     player = Player(0, 0)
+    player.sprites = loadPlayerSprites()
 
     #Create enemies
     enemies = []
@@ -36,12 +55,9 @@ def start():
     for x in range(0, 20):
         obstacles.append(Obstacle(x*32, 250, 32, 32))
 
-    main()
-
-
-def main():
     while True:
         player.time += 1
+        player.sprite = "idle"
         for event in pygame.event.get():
             if event.type == QUIT:
                 return
@@ -70,14 +86,11 @@ def main():
                 #If the x key is pressed
                 if event.key == pygame.K_x:
                     if(player.orientation == 1):
-                        #Create a very large attack rectangle
                         attack = pygame.Rect(player.rect.x + player.rect.width, player.rect.y, 2000, player.rect.height)
-                        #Check for obstacles colliding with the attack and trim it as needed
                         for obstacle in obstacles:
                             if(attack.colliderect(obstacle.rect)):
-                                attack.width = obstacle.rect.x - attack.x
+                                attack.width = obstacle.rect.x - attack
                     else:
-                        #This is the same as above but slightly different because they're in different directions
                         attack = pygame.Rect(player.rect.x - 2000, player.rect.y, 2000, player.rect.height)
                         for obstacle in obstacles:
                             if(attack.colliderect(obstacle.rect)):
@@ -85,12 +98,15 @@ def main():
                                     attack.x = obstacl.rect.x
                                     attack.width -= difference
 
+
         keys = pygame.key.get_pressed()
         #Movement left/right
         if keys[pygame.K_LEFT]:
+            player.sprite = "left"
             player.orientation = -1
             player.moveX(-1)
         if keys[pygame.K_RIGHT]:
+            player.sprite = "right"
             player.orientation = 1
             player.moveX(1)
 
@@ -164,4 +180,4 @@ def main():
         #Update the display
         pygame.display.update()
 
-if __name__ == "__main__": start()
+if __name__ == "__main__": main()

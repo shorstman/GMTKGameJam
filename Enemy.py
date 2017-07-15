@@ -4,7 +4,6 @@ import time
 class Enemy():
     def __init__(self, x, y, width, height, aggrodist, speed):
         self.health = 100
-        self.sneak = 0
         self.rect = pygame.Rect(x, y, width, height)
         self.dx = 0
         self.dy = 0
@@ -80,7 +79,6 @@ class Chomper(Enemy):
     """
     def __init__(self, x, y):
         self.health = 100
-        self.sneak = 0
         self.rect = pygame.Rect(x, y, 64, 64)
         self.dx = 0
         self.dy = 0

@@ -18,6 +18,8 @@ class Player():
         self.rocketDamage = 30
         self.damageCooldown = False
         self.damageCooldownTime = 0
+        self.sprite = "idle"
+        self.hoverSprite = 1
 
     def moveX(self, distance):
         #Move 'distance' in the x direction
@@ -49,7 +51,11 @@ class Player():
 
     def drawPlayer(self, window):
         #Draw the player
-        pygame.draw.rect(window, (0, 255, 0), self.rect)
+        if(self.hoverSprite >= len(self.sprites[self.sprite])):
+            self.hoverSprite = 1
+        window.blit(self.sprites[self.sprite][0], (self.rect.x, self.rect.y))
+        window.blit(self.sprites[self.sprite][int(self.hoverSprite)], (self.rect.x, self.rect.y))
+        self.hoverSprite += .05
 
     def checkObstacleCollisions(self, colliders):
         """
