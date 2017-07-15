@@ -14,6 +14,8 @@ NAME = "GMTKGameJam"
 dirSymbol = "/"
 screenWidth = 900
 screenHeight = 600
+viewXPadding = 200
+viewYPadding = 100
 
 def loadPlayerSprites():
     #This loads all the sprite images for the player
@@ -75,7 +77,7 @@ def main():
     pauseMenu.append(UIElement(100, 100, 50, 100, "game"))
     pauseMenu.append(UIElement(100, 200, 50, 100, "menu"))
     #Create the player object
-    player = Player(0, 0)
+    player = Player(300, 100)
     player.sprites = loadPlayerSprites()
 
     #Create enemies
@@ -84,7 +86,7 @@ def main():
         enemies.append(Chomper(x*300, 0))
 
     # Create map object
-    level = Map(screenWidth,screenHeight)
+    level = Map(screenWidth,screenHeight, viewXPadding, viewYPadding)
     obstacles = level.getObjectList() # If the player is out of bounds, update the obstacles
 
     while True:
@@ -114,7 +116,7 @@ def main():
             for element in pauseMenu:
                 element.drawElement(window)
         elif(activeInterface == "game"):
-            if(level.inBounds(player.rect.x, player.rect.y)) > 0: # Check if the player is in bounds every loop
+            if(not level.inBounds(player.rect.x, player.rect.y)): # Check if the player is in bounds every loop
                 obstacles = level.getObjectList() # If the player is out of bounds, update the obstacles
 
             player.time += 1
@@ -257,6 +259,9 @@ def main():
             #Draw the obstacles
             for obstacle in obstacles:
                 obstacle.drawObstacle(window)
+
+            print(level.yMin)
+            pygame.draw.rect(window, (255, 0, 0), pygame.Rect(level.xMin, level.yMin, level.xMax - level.xMin, level.yMax - level.yMin), 2)
 
         #Update the display
         pygame.display.update()
