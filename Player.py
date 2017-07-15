@@ -4,7 +4,7 @@ class Player():
     def __init__(self, x, y):
         self.health = 100
         self.sneak = 0
-        self.rect = pygame.Rect(x, y, 64, 64)
+        self.rect = pygame.Rect(x, y, 34, 64)
         self.dx = 0
         self.dy = 0
         self.onGround = False
