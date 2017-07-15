@@ -52,7 +52,7 @@ def main():
 
     #Create obstacles
     obstacles = []
-    for x in range(0, 20):
+    for x in range(0, 29):
         obstacles.append(Obstacle(x*32, 250, 32, 32))
 
     while True:
@@ -162,11 +162,16 @@ def main():
                 playerDist = math.sqrt(math.pow(player.rect.x - enemy.rect.x, 2)
                                         + math.pow(player.rect.y - enemy.rect.y, 2))
                 #If the player is within aggro distance of the enemy, run aggro action
-                if(playerDist <= enemy.aggrodist):
+                if(playerDist <= enemy.aggrodist and not enemy.aggro):
+                    enemy.aggroAction(player)
                     enemy.aggro = True
-
+                print(enemy.interruptable)
+                if(not enemy.interruptable):
+                    stopper= input()
                 if(enemy.aggro):
                     enemy.aggroAction(player)
+                    if(playerDist > enemy.aggrodist + 100 and enemy.interruptable):
+                        enemy.aggro = False
 
                 #Draw enemy and to kinatmics calculations/check for collisions
                 enemy.time += 1

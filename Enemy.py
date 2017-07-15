@@ -16,6 +16,7 @@ class Enemy():
         self.color = (255, 0, 0)
         self.damageCooldown = False
         self.damageCooldownTime = None
+        self.interruptable = True
 
     def moveX(self, distance):
         #Move 'distance' in the x direction
@@ -91,6 +92,7 @@ class Chomper(Enemy):
         self.startX = 0
         self.color = (255, 0, 0)
         self.damageCooldown = False
+        self.interruptable = True
 
     def aggroAction(self, player):
         """
@@ -100,12 +102,25 @@ class Chomper(Enemy):
         #Calculate how long it has been since the start time
         currentTime = int(time.time() - self.chargeStart)
         print(currentTime)
+        if(not self.aggro):
+            #Get the start time to calculate 3 seconds
+            self.chargeStart = time.time()
+            self.interruptable = False
+        if(currentTime == 0):
+            #Find the direction the player is in
+            if(player.rect.x > self.rect.x):
+                self.orientation = 1
+            else:
+                self.orientation = -1
+            #Get the starting x value so always charges the same distance
+            self.startX = self.rect.x
         if(currentTime >= 3): #If it has been three seconds
             #Add the speed
             self.rect.x += self.speed*self.orientation
             #If it reaches 300 pixels from the starting point, stop
-            if(abs(self.rect.x - self.startX) > 300):
+            if(abs(self.rect.x - self.startX) > 150):
                 self.chargeStart = time.time()
+                self.interruptable = True
 
 class Spinner(Enemy):
     def aggroAction(self, player):
