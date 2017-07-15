@@ -20,7 +20,6 @@ class Enemy():
 
     def moveX(self, distance):
         #Move 'distance' in the x direction
-        print(distance)
         self.dx = distance
         self.rect.x += self.dx
 

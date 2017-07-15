@@ -66,7 +66,7 @@ def main():
     window.blit(background, (0,0))
     pygame.display.flip()
 
-    activeInterface = "menu"
+    activeInterface = "game"
     menu = []
     menu.append(UIElement(100, 100, 100, 100, "game"))
 
