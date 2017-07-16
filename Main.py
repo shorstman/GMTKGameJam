@@ -77,7 +77,7 @@ def main():
     pauseMenu.append(UIElement(100, 100, 50, 100, "game"))
     pauseMenu.append(UIElement(100, 200, 50, 100, "menu"))
     #Create the player object
-    player = Player(700, 300)
+    player = Player(500, 300)
     player.sprites = loadPlayerSprites()
 
     enemies = []
@@ -177,7 +177,6 @@ def main():
             if(not level.inBounds(player)): # Check if the player is in bounds every loop
                 obstacles = level.getObjectList() # If the player is out of bounds, update the obstacles
 
-
             keys = pygame.key.get_pressed()
             #Movement left/right
             if keys[pygame.K_LEFT]:
@@ -190,20 +189,22 @@ def main():
                 player.moveX(1)
 
             #Check collisions on x axis
-            player.updateXPos(level.x)
+            print()
+            print(player.rect.x)
+            player.updatePos(level.x, level.y)
+            print(player.rect.x)
             player.checkObstacleCollisions(obstacles, level)
+            print(player.rect.x)
 
             #Jump
             if keys[pygame.K_UP]:
                 if(player.onGround):
-                    print("jump")
-                    print("level.y = " + str(level.y))
                     player.jumping = 2
                     player.moveY(player.jumping)
             player.moveY(player.jumping)
 
             #Check collisions on y axis
-            player.updateYPos(level.y)
+            player.updatePos(level.x, level.y)
             player.checkObstacleCollisions(obstacles, level)
 
             for enemy in enemies:

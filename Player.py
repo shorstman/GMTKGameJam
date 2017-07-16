@@ -40,7 +40,7 @@ class Player():
     def moveX(self, distance):
         #Move 'distance' in the x direction
         self.dx = distance
-        #self.rect.x += self.dx
+        self.rect.x += self.dx
         self.worldX += self.dx
 
     def moveY(self, distance):
@@ -84,18 +84,18 @@ class Player():
             if self.rect.colliderect(collider.rect):
                 if self.dx > 0:
                     self.rect.right = collider.rect.left
-                    self.worldX = collider.rect.left + level.x
+                    #self.worldX = collider.rect.left + level.x
                 elif self.dx < 0:
                     self.rect.left = collider.rect.right
-                    self.worldX = collider.rect.right + level.x
+                    #self.worldX = collider.rect.right + level.x
                 if self.dy > 0:
                     #If the player is on top of an obstacle, set onGround to True
                     self.onGround = True
                     self.rect.bottom = collider.rect.top
-                    self.worldY = collider.rect.top + level.y
+                    #self.worldY = collider.rect.top + level.y
                 elif self.dy < 0:
                     self.rect.top = collider.rect.bottom
-                    self.worldY = collider.rect.bottom + level.y
+                    #self.worldY = collider.rect.bottom + level.y
         self.dx = 0
         self.dy = 0
 

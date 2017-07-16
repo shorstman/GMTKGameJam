@@ -24,10 +24,12 @@ class Map():
         self.viewYPadding = viewYPadding
         self.boolMap = GenerateMap(64, 128, 46, 3, 4, 2)
         self.localMap = []
-        #self.map = self.boolMap.map
+        self.map = self.boolMap.map
+        """
         self.map = []
         for x in range(0, 30):
             self.map.append(Obstacle(64*x, 400, 64, 64, 40))
+        """
         self.mapObjects = []
         self.setBounds()
 
@@ -50,13 +52,7 @@ class Map():
             self.y = player.worldY - self.viewYPadding
             playerIn = False
         if(not playerIn):
-            print()
-            print(player.worldX)
-            print(player.worldY)
-            print(self.x)
-            print(self.y)
-            player.updateXPos(self.x)
-            player.updateYPos(self.y)
+            player.updatePos(self.x, self.y)
             self.setBounds()
         return playerIn
 
