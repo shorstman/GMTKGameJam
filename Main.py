@@ -240,7 +240,7 @@ def main():
 
             for enemy in enemies:
                 #Check if player is on the ground for jump attack
-                if(not player.onGround):
+                if(player.jumping > 0):
                     #Create rectangle to collide with enemy
                     attack = pygame.Rect(player.rect.x, player.rect.y + player.rect.height,
                                         player.rect.width, 16)
@@ -301,9 +301,6 @@ def main():
                     currentTime = int(time.time() - startTime)
                     player.vulnerability = -0.05*currentTime + vulnerabilityDecay
 
-            #Draw the player
-            player.drawPlayer(window)
-
             #Draw the obstacles
             for obstacle in obstacles:
                 if(obstacle.health <= 0):
@@ -311,6 +308,10 @@ def main():
                     del level.map[level.map.index(obstacle)]
                 else:
                     obstacle.drawObstacle(window, level)
+
+            #Draw the player
+            player.drawPlayer(window)
+            playerAttackAnimation(window, player)
 
         #Update the display
         pygame.display.update()
