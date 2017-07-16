@@ -13,71 +13,72 @@ if player.x > sc
 
 """
 import pygame
-from Obstacle import Obstacle
+from Obstacle import *
+from GenerateMap import GenerateMap
 
 debugLevel = 1
 
 class Map():
     def __init__(self, sw, sh, viewXPadding, viewYPadding):
-        self.origin = [sw/2,sh/2]
+        self.x = 0
+        self.y = 0
         self.sw = sw
         self.sh = sh
         self.viewXPadding = viewXPadding
         self.viewYPadding = viewYPadding
+        self.boolMap = GenerateMap(64, 128, 46, 3, 4, 2)
+        self.localMap = []
+        self.map = self.boolMap.map
+        self.mapObjects = []
         self.setBounds()
 
-        # GenerateMap()
-        self.localMap = []
-        self.map = [[0,0,10,10,40],[100,200,100,100,40],[20,20,10,10,40],[300,300,100,100,40]]
-        self.mapObjects = []
-        # Map block types:
-            # 0: Wall
-            # 1: Hurty obstacle
-            # 2: Portal In
-            # 3: Portal Out
 
     def inBounds(self, x, y):
         """
         Returns 0 if the player is in bounds. Returns 1 if the player is out of bounds and the map has to be redrawn.
         """
         playerIn = True
-        if ((x > self.xMax) or (y > self.yMax)):  # Detect if the player is out of bounds and reset the origin if they are
-            self.origin[0] = x-(self.xMax - self.xMin)/2
+        if (x > self.xMax - self.x):  # Detect if the player is out of bounds and reset the origin if they are
+            self.x = x - 700#self.viewXPadding - (self.xMax - self.xMin)
             playerIn = False
-        elif ((x < self.xMin) or (y < self.yMin)):
-            self.origin[0] = x+(self.xMax - self.xMin)/2
+        if (x < self.xMin - self.x):
+            self.x = x - self.viewXPadding
             playerIn  = False
-        if(y > self.yMax):
+        """
+        if(y > self.yMax - self.y):
             self.origin[1] = y-(self.yMax - self.yMin)/2
             playerIn = False
-        elif(y < self.yMin):
+        if(y < self.yMin - self.y):
             self.origin[1] = y+(self.yMax - self.yMin)/2
             playerIn = False
-        self.setBounds()
+        """
+        if(not playerIn):
+            self.setBounds()
         return playerIn
 
     def getLocalMapSubset(self):
+        for obstacle in self.mapObjects:
+            del obstacle
         self.mapObjects = []
         localXMap = []
+        self.localMap = []
         for i in range(0, len(self.map)): # Iterate through all map values
-            if((self.map[i][0] > self.xMin - self.viewXPadding) or (self.map[i][0] < self.xMax + self.viewXPadding)): # If any given map value is within the user's FOV X bounds;
+            if((self.map[i].rect.x > self.x) and (self.map[i].rect.x < self.x + self.sw)): # If any given map value is within the user's FOV X bounds;
                 localXMap.append(self.map[i]) # Add that value to localXMap
         for i in range(0, len(localXMap)): # Iterate through all localXMap values
-            if((localXMap[i][1] > self.yMin - self.viewYPadding or localXMap[i][1] < self.yMax + self.viewXPadding)): # If any given localXMap value is within the user's FOV Y bounds;
+            if((localXMap[i].rect.y > self.y and localXMap[i].rect.y < self.y + self.sh)): # If any given localXMap value is within the user's FOV Y bounds;
                 self.localMap.append(localXMap[i]) # Add that value to localMap
-                self.mapObjects.append(Obstacle(self.localMap[i][0],self.localMap[i][1],self.localMap[i][2],self.localMap[i][3],self.localMap[i][4])) # Obstacle(x,y,w,h)
-        print(str(self.mapObjects))
+        for i in range(0, len(self.localMap)):
+            self.mapObjects.append(self.localMap[i]) # Obstacle(x,y,w,h)
 
     def setBounds(self):
-        self.xMax = self.origin[0] + self.sw/2 - self.viewXPadding
-        self.yMax = self.origin[1] + self.sh/2 - self.viewYPadding
-        self.xMin = self.origin[0] - self.sw/2 + self.viewXPadding
-        self.yMin = self.origin[1] - self.sh/2 + self.viewYPadding
+        self.xMax = self.x + self.sw - self.viewXPadding
+        self.xMin = self.x + self.viewXPadding
+        self.yMax = self.y + self.sh - self.viewYPadding
+        self.yMin = self.y + self.viewYPadding
+        for obstacle in self.map:
+            obstacle.updateRectangle(self.x, self.y)
 
     def getObjectList(self):
         self.getLocalMapSubset()
         return self.mapObjects
-
-    def debug(text,level):
-        if(level >= debugLevel):
-            print(text)

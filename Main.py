@@ -77,14 +77,17 @@ def main():
     pauseMenu.append(UIElement(100, 100, 50, 100, "game"))
     pauseMenu.append(UIElement(100, 200, 50, 100, "menu"))
     #Create the player object
-    player = Player(300, 100)
+    player = Player(450, 300)
     player.sprites = loadPlayerSprites()
+
+    enemies = []
+    """
 
     #Create enemies
     enemies = []
     for x in range(1, 2):
         enemies.append(Chomper(x*300, 0))
-
+    """
     # Create map object
     level = Map(screenWidth,screenHeight, viewXPadding, viewYPadding)
     obstacles = level.getObjectList() # If the player is out of bounds, update the obstacles
@@ -116,9 +119,6 @@ def main():
             for element in pauseMenu:
                 element.drawElement(window)
         elif(activeInterface == "game"):
-            if(not level.inBounds(player.rect.x, player.rect.y)): # Check if the player is in bounds every loop
-                obstacles = level.getObjectList() # If the player is out of bounds, update the obstacles
-
             player.time += 1
             player.sprite = "idle"
             #Refresh the background
@@ -168,8 +168,12 @@ def main():
 
                     # If the c key is pressed
                     if event.key == pygame.K_c:
-                        print("x: " +str(player.rect.x) +" y: " +str(player.rect.y)) # Print coordinates
-
+                        print("player X = " + str(player.rect.x))
+                        print("player Y = " + str(player.rect.y))
+                        print("xMax = " + str(level.xMax - level.x))
+                        print("xMin = " + str(level.xMin - level.x))
+                        print("yMax = " + str(level.yMax - level.y))
+                        print("yMin = " + str(level.yMin - level.y))
 
             keys = pygame.key.get_pressed()
             #Movement left/right
@@ -194,6 +198,9 @@ def main():
 
             #Check collisions on y axis
             player.checkObstacleCollisions(obstacles)
+
+            if(not level.inBounds(player.rect.x, player.rect.y)): # Check if the player is in bounds every loop
+                obstacles = level.getObjectList() # If the player is out of bounds, update the obstacles
 
             for enemy in enemies:
                 #Check if player is on the ground for jump attack
@@ -258,10 +265,9 @@ def main():
 
             #Draw the obstacles
             for obstacle in obstacles:
-                obstacle.drawObstacle(window)
+                obstacle.drawObstacle(window, level)
 
-            print(level.yMin)
-            pygame.draw.rect(window, (255, 0, 0), pygame.Rect(level.xMin, level.yMin, level.xMax - level.xMin, level.yMax - level.yMin), 2)
+            pygame.draw.rect(window, (255, 0, 0), pygame.Rect(level.xMin - level.x, level.yMin - level.y, level.xMax - level.xMin, level.yMax - level.yMin), 2)
 
         #Update the display
         pygame.display.update()
