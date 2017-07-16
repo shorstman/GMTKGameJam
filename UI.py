@@ -16,3 +16,4 @@ class UIElement():
         pygame.draw.rect(window, (100, 100, 100), self.rect)
         textArea = self.font.render(self.text, False, (0, 0, 0))
         window.blit(textArea,(self.rect.x,self.rect.y))
+        #print("Width: " +str(textArea.get_width()) +", Height: " +str(textArea.get_height()))
