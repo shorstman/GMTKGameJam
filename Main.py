@@ -250,12 +250,6 @@ def main():
                 if(enemy.health <= 0 and enemy.animationFrame == len(enemy.sprites[enemy.sprite]) - 1):
                     del enemies[enemies.index(enemy)]
                 else:
-                    if(time.time() - enemy.animation >= 0.1):
-                        enemy.animationFrame += 1
-                        enemy.animation = time.time()
-                        if(enemy.animationFrame >= len(enemy.sprites[enemy.sprite])):
-                            enemy.animationFrame = 0
-
                     #Get the distance between the enemy and the player
                     playerDist = math.sqrt(math.pow(player.rect.x - enemy.rect.x, 2)
                                             + math.pow(player.rect.y - enemy.rect.y, 2))
@@ -274,6 +268,11 @@ def main():
                     enemy.checkObstacleCollisions(obstacles, level)
                     if(enemy.onGround):
                         enemy.time = 0
+                    if(time.time() - enemy.animation >= 0.1):
+                        enemy.animationFrame += 1
+                        enemy.animation = time.time()
+                        if(enemy.animationFrame >= len(enemy.sprites[enemy.sprite])):
+                            enemy.animationFrame = 0
                     enemy.drawEnemy(window)
 
             if(player.jumping > 0):
