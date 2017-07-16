@@ -85,12 +85,13 @@ def main():
     bgCtr = 0;
 
     enemies = []
-    """
     #Create enemies
     enemies = []
     for x in range(1, 2):
-        enemies.append(Chomper(x*300, 0))
-    """
+        enemies.append(Spinner(x*300, 200, 50, 50, 100, 3))
+
+    for enemy in enemies:
+        enemy.loadSprites(dirSymbol)
     # Create map object
     level = Map(screenWidth,screenHeight, viewXPadding, viewYPadding)
     obstacles = level.getObjectList() # If the player is out of bounds, update the obstacles
@@ -141,7 +142,10 @@ def main():
                         for enemy in enemies:
                             #If an enemy is in range call smallAttack from the player
                             if(enemy.rect.colliderect(attackRect)):
-                                enemy.damage(20, player)
+                                enemy.damage(30, player)
+                        for obstacle in obstacles:
+                            if(obstacle.rect.colliderect(attackRect)):
+                                obstacle.damage(20)
                     #Check if the left shift is pressed
                     if event.key == pygame.K_LSHIFT:
                         #Toggle on/off vulnerable ability
@@ -179,6 +183,8 @@ def main():
 
             if(not level.inBounds(player)): # Check if the player is in bounds every loop
                 player.updatePos(level.x, level.y)
+                for enemy in enemies:
+                    enemy.updatePos(level.x, level.y)
                 level.setBounds()
                 obstacles = level.getObjectList() # If the player is out of bounds, update the obstacles
 
@@ -200,7 +206,7 @@ def main():
             #Jump
             if keys[pygame.K_UP]:
                 if(player.onGround):
-                    player.jumping = 2
+                    player.jumping = 2.2
                     player.moveY(player.jumping)
             player.moveY(player.jumping)
 
@@ -209,6 +215,7 @@ def main():
             player.checkObstacleCollisions(obstacles, level)
 
             for enemy in enemies:
+
                 #Check if player is on the ground for jump attack
                 if(not player.onGround):
                     #Create rectangle to collide with enemy
@@ -217,29 +224,35 @@ def main():
                     #If rectangle collides, do damage
                     if(enemy.rect.colliderect(attack)):
                         enemy.damage(30, player)
+                if(enemy.health <= 0 and enemy.animationFrame == len(enemy.sprites[enemy.sprite]) - 1):
+                    enemy.kill()
+                else:
+                    if(time.time() - enemy.animation >= 0.1):
+                        enemy.animationFrame += 1
+                        enemy.animation = time.time()
+                        if(enemy.animationFrame >= len(enemy.sprites[enemy.sprite])):
+                            enemy.animationFrame = 0
 
-                #If the enemy has zero health, remove it
+                    #Get the distance between the enemy and the player
+                    playerDist = math.sqrt(math.pow(player.rect.x - enemy.rect.x, 2)
+                                            + math.pow(player.rect.y - enemy.rect.y, 2))
 
-                #Get the distance between the enemy and the player
-                playerDist = math.sqrt(math.pow(player.rect.x - enemy.rect.x, 2)
-                                        + math.pow(player.rect.y - enemy.rect.y, 2))
+                    #If the player is within aggro distance of the enemy, run aggro action
+                    if(playerDist <= enemy.aggrodist and not enemy.aggro):
+                        enemy.aggroAction(player)
+                        enemy.aggro = True
+                    if(enemy.aggro):
+                        enemy.aggroAction(player)
+                        if(playerDist > enemy.aggrodist + 100 and enemy.interruptable):
+                            enemy.aggro = False
 
-                #If the player is within aggro distance of the enemy, run aggro action
-                if(playerDist <= enemy.aggrodist and not enemy.aggro):
-                    enemy.aggroAction(player)
-                    enemy.aggro = True
-                if(enemy.aggro):
-                    enemy.aggroAction(player)
-                    if(playerDist > enemy.aggrodist + 100 and enemy.interruptable):
-                        enemy.aggro = False
-
-                #Draw enemy and to kinatmics calculations/check for collisions
-                enemy.time += 1
-                enemy.moveY(0)
-                enemy.checkObstacleCollisions(obstacles)
-                if(enemy.onGround):
-                    enemy.time = 0
-                enemy.drawEnemy(window)
+                    #Draw enemy and to kinatmics calculations/check for collisions
+                    enemy.time += 1
+                    enemy.moveY(0)
+                    enemy.checkObstacleCollisions(obstacles, level)
+                    if(enemy.onGround):
+                        enemy.time = 0
+                    enemy.drawEnemy(window)
 
 
             if(player.jumping > 0):
@@ -270,8 +283,6 @@ def main():
             #Draw the obstacles
             for obstacle in obstacles:
                 obstacle.drawObstacle(window, level)
-
-            pygame.draw.rect(window, (255, 0, 0), pygame.Rect(level.xMin - level.x, level.yMin - level.y, level.xMax - level.xMin, level.yMax - level.yMin), 2)
 
         #Update the display
         pygame.display.update()
