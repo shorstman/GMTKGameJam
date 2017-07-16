@@ -262,7 +262,6 @@ def main():
 
                     #If the player is within aggro distance of the enemy, run aggro action
                     if(playerDist <= enemy.aggrodist and not enemy.aggro):
-                        enemy.aggroAction(player, playerDist)
                         enemy.aggro = True
                     if(enemy.aggro):
                         enemy.aggroAction(player, playerDist)
