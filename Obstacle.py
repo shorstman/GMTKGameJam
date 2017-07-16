@@ -9,6 +9,7 @@ class Obstacle(object):
 
     def drawObstacle(self, window, level):
         pygame.draw.rect(window, (168, 168, 168), self.rect)
+        pygame.draw.rect(window, (100, 100, 100), self.rect, 3)
 
     def damage(self, damage):
         self.health -= damage
