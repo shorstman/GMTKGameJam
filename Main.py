@@ -206,7 +206,7 @@ def main():
             #Jump
             if keys[pygame.K_UP]:
                 if(player.onGround):
-                    player.jumping = 2.2
+                    player.jumping = 2.3
                     player.moveY(player.jumping)
             player.moveY(player.jumping)
 
@@ -215,7 +215,6 @@ def main():
             player.checkObstacleCollisions(obstacles, level)
 
             for enemy in enemies:
-
                 #Check if player is on the ground for jump attack
                 if(not player.onGround):
                     #Create rectangle to collide with enemy
@@ -225,7 +224,7 @@ def main():
                     if(enemy.rect.colliderect(attack)):
                         enemy.damage(30, player)
                 if(enemy.health <= 0 and enemy.animationFrame == len(enemy.sprites[enemy.sprite]) - 1):
-                    enemy.kill()
+                    del enemies[enemies.index(enemy)]
                 else:
                     if(time.time() - enemy.animation >= 0.1):
                         enemy.animationFrame += 1
@@ -282,7 +281,10 @@ def main():
 
             #Draw the obstacles
             for obstacle in obstacles:
-                obstacle.drawObstacle(window, level)
+                if(obstacle.health <= 0):
+                    del obstacles[obstacles.index(obstacle)]
+                else:
+                    obstacle.drawObstacle(window, level)
 
         #Update the display
         pygame.display.update()
