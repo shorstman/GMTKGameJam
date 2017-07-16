@@ -71,11 +71,10 @@ def main():
 
     activeInterface = "game"
     menu = []
-    menu.append(UIElement(100, 100, 100, 100, "game", "Return"))
+    menu.append(UIElement(100, 100, 150, 40, "game", "Return to game"))
+    #menu.append(UIElement(100, 150, 150, 40, "menu", "Menu"))
+    menu.append(UIElement(screenWidth/2,screenHeight/2,50,20,"menu","Paused"))
 
-    pauseMenu = []
-    pauseMenu.append(UIElement(100, 100, 50, 100, "game", "Return"))
-    pauseMenu.append(UIElement(100, 200, 50, 100, "menu", "Menu"))
     #Create the player object
     player = Player(500, 300)
     player.sprites = loadPlayerSprites()
@@ -98,19 +97,6 @@ def main():
 
     while True:
         if(activeInterface == "menu"):
-            for event in pygame.event.get():
-                if event.type == QUIT:
-                    return
-                if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
-                    mousePos = pygame.mouse.get_pos()
-                    for element in menu:
-                        if(element.rect.collidepoint(mousePos)):
-                            activeInterface = element.clicked()
-            window.blit(background, (0,0))
-            for element in menu:
-                element.drawElement(window)
-
-        elif(activeInterface == "pause"):
             if (bgCtr < 100):
                 window.blit(pauseBg, (0,0))
                 bgCtr+= 1
@@ -120,12 +106,16 @@ def main():
                     return
                 if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
                     mousePos = pygame.mouse.get_pos()
-                    for element in pauseMenu:
+                    for element in menu:
                         if(element.rect.collidepoint(mousePos)):
                             activeInterface = element.clicked()
+                            if(not activeInterface == "menu"):
+                                hasRun = False;
+            if (not hasRun):
+                for element in menu:
+                    element.drawElement(window)
 
-            for element in pauseMenu:
-                element.drawElement(window)
+            hasRun = True;
 
         elif(activeInterface == "game"):
             player.time += 1
@@ -138,7 +128,8 @@ def main():
                 if event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_ESCAPE:
                         bgCtr = 0;
-                        activeInterface = "pause"
+                        hasRun = False;
+                        activeInterface = "menu"
 
                     #Check if the z key is pressed
                     if event.key == pygame.K_z:
