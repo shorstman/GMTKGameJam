@@ -24,31 +24,39 @@ class Map():
         self.viewYPadding = viewYPadding
         self.boolMap = GenerateMap(64, 128, 46, 3, 4, 2)
         self.localMap = []
-        self.map = self.boolMap.map
+        #self.map = self.boolMap.map
+        self.map = []
+        for x in range(0, 30):
+            self.map.append(Obstacle(64*x, 400, 64, 64, 40))
         self.mapObjects = []
         self.setBounds()
 
 
-    def inBounds(self, x, y):
+    def inBounds(self, player):
         """
         Returns 0 if the player is in bounds. Returns 1 if the player is out of bounds and the map has to be redrawn.
         """
         playerIn = True
-        if (x > self.xMax - self.x):  # Detect if the player is out of bounds and reset the origin if they are
-            self.x = x - 700#self.viewXPadding - (self.xMax - self.xMin)
+        if (player.rect.x > self.xMax - self.x):  # Detect if the player is out of bounds and reset the origin if they are
+            self.x = player.worldX - 700#self.viewXPadding - (self.xMax - self.xMin)
             playerIn = False
-        if (x < self.xMin - self.x):
-            self.x = x - self.viewXPadding
+        if (player.rect.x < self.xMin - self.x):
+            self.x = player.worldX - self.viewXPadding
             playerIn  = False
-        """
-        if(y > self.yMax - self.y):
-            self.origin[1] = y-(self.yMax - self.yMin)/2
+        if(player.rect.y > self.yMax - self.y):
+            self.y = player.worldY - 500
             playerIn = False
-        if(y < self.yMin - self.y):
-            self.origin[1] = y+(self.yMax - self.yMin)/2
+        if(player.rect.y < self.yMin - self.y):
+            self.y = player.worldY - self.viewYPadding
             playerIn = False
-        """
         if(not playerIn):
+            print()
+            print(player.worldX)
+            print(player.worldY)
+            print(self.x)
+            print(self.y)
+            player.updateXPos(self.x)
+            player.updateYPos(self.y)
             self.setBounds()
         return playerIn
 

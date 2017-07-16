@@ -5,6 +5,8 @@ class Player():
     def __init__(self, x, y):
         self.maxHealth = 100
         self.health = self.maxHealth
+        self.worldX = x
+        self.worldY = y
         self.rect = pygame.Rect(x, y, 34, 64)
         self.dx = 0
         self.dy = 0
@@ -22,18 +24,29 @@ class Player():
         self.smallAttackFrame = 0
         self.jumpFrame = 0
 
+    def updatePos(self, xOffset, yOffset):
+        newX = self.worldX - xOffset
+        newY = self.worldY - yOffset
+        self.rect = pygame.Rect(newX, newY, self.rect.width, self.rect.height)
+
+    def updateXPos(self, xOffset):
+        newX = self.worldX - xOffset
+        self.rect = pygame.Rect(newX, self.rect.y, self.rect.width, self.rect.height)
+
+    def updateYPos(self, yOffset):
+        newY = self.worldY - yOffset
+        self.rect = pygame.Rect(self.rect.x, newY, self.rect.width, self.rect.height)
+
     def moveX(self, distance):
         #Move 'distance' in the x direction
         self.dx = distance
-        self.rect.x += self.dx
-        if(self.rect.x > 928 +- self.rect.width):
-            self.rect.x = 928 - self.rect.width
-        if(self.rect.x < 0):
-            self.rect.x = 0
+        #self.rect.x += self.dx
+        self.worldX += self.dx
 
     def moveY(self, distance):
         #Do kinematics calculations for gravity
         self.dy = -distance + 0.02*self.time
+        self.worldY += self.dy
         self.rect.y += self.dy
         self.onGround = False
 
@@ -59,7 +72,7 @@ class Player():
             window.blit(self.sprites[self.sprite][int(self.hoverSprite)], (self.rect.x, self.rect.y))
             self.hoverSprite += .05
 
-    def checkObstacleCollisions(self, colliders):
+    def checkObstacleCollisions(self, colliders, level):
         """
         This function checks only against basic obstacles because much more needs
         to be done to deal with a collision with these.
@@ -71,14 +84,18 @@ class Player():
             if self.rect.colliderect(collider.rect):
                 if self.dx > 0:
                     self.rect.right = collider.rect.left
+                    self.worldX = collider.rect.left + level.x
                 elif self.dx < 0:
                     self.rect.left = collider.rect.right
+                    self.worldX = collider.rect.right + level.x
                 if self.dy > 0:
                     #If the player is on top of an obstacle, set onGround to True
                     self.onGround = True
                     self.rect.bottom = collider.rect.top
+                    self.worldY = collider.rect.top + level.y
                 elif self.dy < 0:
                     self.rect.top = collider.rect.bottom
+                    self.worldY = collider.rect.bottom + level.y
         self.dx = 0
         self.dy = 0
 

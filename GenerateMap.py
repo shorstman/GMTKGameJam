@@ -89,7 +89,7 @@ class GenerateMap():
     def convertMap(self):
         for x in range(0, len(self.boolMap)):
             for y in range(0, len(self.boolMap[x])):
-                if(self.boolMap[x][y]):
+                if(not self.boolMap[x][y]):
                     self.map.append(Obstacle(x*64, y*64, 64, 64, 40))
 
     def getObstacleCount(self):
