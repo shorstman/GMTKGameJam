@@ -1,10 +1,13 @@
 import pygame
 import time
+import os
 
 class Enemy():
     def __init__(self, x, y, width, height, aggrodist, speed):
         self.health = 100
         self.rect = pygame.Rect(x, y, width, height)
+        self.worldX = x
+        self.worldY = y
         self.dx = 0
         self.dy = 0
         self.speed = speed
@@ -18,14 +21,21 @@ class Enemy():
         self.damageCooldownTime = None
         self.interruptable = True
 
+    def updatePos(self, xOffset, yOffset):
+        newX = self.worldX - xOffset
+        newY = self.worldY - yOffset
+        self.rect = pygame.Rect(newX, newY, self.rect.width, self.rect.height)
+
     def moveX(self, distance):
         #Move 'distance' in the x direction
         self.dx = distance
         self.rect.x += self.dx
+        self.worldX += self.dx
 
     def moveY(self, distance):
         self.dy = -distance + 0.1*self.time
         self.rect.y += self.dy
+        self.worldY += self.dy
         self.onGround = False
 
     def damage(self, damage, attacker):
@@ -49,11 +59,18 @@ class Enemy():
                 self.moveX(10)
             self.moveY(3)
 
+            if(self.health <= 0):
+                del self
+
     def drawEnemy(self, window):
         #Draw the player
         pygame.draw.rect(window, self.color, self.rect)
 
-    def checkObstacleCollisions(self, colliders):
+    def checkObstacleCollisions(self, colliders, level):
+        """
+        This function checks only against basic obstacles because much more needs
+        to be done to deal with a collision with these.
+        """
         #Check if the player has collided with 'collider'
         if(self.dy > 0):
             self.onGround = False
@@ -61,20 +78,20 @@ class Enemy():
             if self.rect.colliderect(collider.rect):
                 if self.dx > 0:
                     self.rect.right = collider.rect.left
+                    self.worldX = collider.rect.left + level.x
                 elif self.dx < 0:
                     self.rect.left = collider.rect.right
+                    self.worldX = collider.rect.right + level.x
                 if self.dy > 0:
+                    #If the player is on top of an obstacle, set onGround to True
                     self.onGround = True
                     self.rect.bottom = collider.rect.top
+                    self.worldY = collider.rect.top - self.rect.height + level.y
                 elif self.dy < 0:
                     self.rect.top = collider.rect.bottom
-
+                    self.worldY = collider.rect.bottom + level.y
         self.dx = 0
         self.dy = 0
-
-    def kill(self):
-        del self
-
 
 class Chomper(Enemy):
     """
@@ -128,6 +145,26 @@ class Chomper(Enemy):
                 self.aggro = False
 
 class Spinner(Enemy):
-    def aggroAction(self, player):
-        if(not self.aggro):
-            self.aggro = True
+    def __init__(self, x, y, width, height, aggrodist, speed):
+        super(Spinner, self).__init__(self, x, y, width, height, aggrodist, speed)
+        self.sprites = {}
+
+    def loadSprites(self, dirSymbol):
+        os.chdir("sprites" + dirSymbol + "Spinner_Sprites")
+        self.sprites = {}
+        self.sprites["idle"] = []
+        for sprite in os.listdir("Hover_Animation"):
+            self.sprites["idle"].append(pygame.image.load("Hover_Animation" + dirSymbol + sprite))
+        self.sprites["body-startup"] = []
+        self.sprites["body-spin"] = []
+        for sprite in os.listdir("Body_Spin_Animation"):
+            if("Ready" in sprite):
+                self.sprites["body-startup"].append(pygame.image.load("Body_Spin_Animation" + dirSymbol + sprite))
+            else:
+                self.sprites["body-spin"].append(pygame.image.load("Body_Spin_Animation" + dirSymbol + sprite))
+        self.sprites["flame-startup"] = []
+        for sprite in os.listdir("Flame_Initiate_Animation"):
+            self.sprites["flame-startup"].append(pygame.image.load("Flame_Initiate_Animation" + dirSymbol + sprite))
+        self.sprites["flame-spin"] = []
+        for sprite ein os.listdir("Flame_Spin_Animation"):
+            self.sprites["flame-spin"].append(pygame.image.load("Flame_Spin_Animation" + dirSymbol + sprite))
