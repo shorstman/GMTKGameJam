@@ -100,8 +100,6 @@ class Enemy():
             self.animationFrame = 0
         if(self.animationFrame == len(self.sprites[self.sprite]) - 1 and self.sprite == "death"):
             pass
-    def kill(self):
-        del self
 
 class Spinner(Enemy):
     def __init__(self, x, y, width, height, aggrodist, speed):
