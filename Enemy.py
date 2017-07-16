@@ -48,8 +48,6 @@ class Enemy():
             else:
                 self.moveX(10)
             self.moveY(3)
-            if(self.health <= 0):
-                self.kill()
 
     def drawEnemy(self, window):
         #Draw the player

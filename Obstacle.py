@@ -2,25 +2,16 @@ import pygame
 
 class Obstacle(object):
     def __init__(self, x, y, width, height, health):
-        self.worldX = x
-        self.worldY = y
-        self.width = width
-        self.height = height
-        self.rect = pygame.Rect(self.worldX, self.worldY, self.width, self.height)
+        self.rect = pygame.Rect(x, y, width, height)
         self.health = health
 
-    def drawObstacle(self, window, level):
+    def drawObstacle(self, window):
         pygame.draw.rect(window, (168, 168, 168), self.rect)
 
     def damage(self, damage):
         self.health -= damage
         if(self.health >= 0):
             del self
-
-    def updateRectangle(self, xOffset, yOffset):
-        newX = self.worldX - xOffset
-        newY = self.worldY - yOffset
-        self.rect = pygame.Rect(newX, newY, self.width, self.height)
 
 class Hurty(Obstacle):
     def __init__(self, x, y, width, height, damage, health):

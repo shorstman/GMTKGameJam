@@ -29,19 +29,16 @@ class Map():
         self.setBounds()
 
 
-    def inBounds(self, player):
+    def inBounds(self, x, y):
         """
         Returns 0 if the player is in bounds. Returns 1 if the player is out of bounds and the map has to be redrawn.
         """
         playerIn = True
-        print(player.rect.x)
-        print(player.worldX)
-        print(self.x)
-        if (player.rect.x >= self.xMax - self.x):  # Detect if the player is out of bounds and reset the origin if they are
-            self.x = player.worldX - 700#self.viewXPadding - (self.xMax - self.xMin)
+        if (x > self.xMax - self.x):  # Detect if the player is out of bounds and reset the origin if they are
+            self.x = x - 700#self.viewXPadding - (self.xMax - self.xMin)
             playerIn = False
-        if (player.rect.x < self.xMin - self.x):
-            self.x = player.worldX - self.viewXPadding
+        if (x < self.xMin - self.x):
+            self.x = x - self.viewXPadding
             playerIn  = False
         """
         if(y > self.yMax - self.y):
