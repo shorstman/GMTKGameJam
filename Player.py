@@ -1,5 +1,6 @@
 import pygame
 import threading
+import time
 
 class Player():
     def __init__(self, x, y):
@@ -42,7 +43,7 @@ class Player():
         self.rect.y += self.dy
         self.onGround = False
 
-    def damage(self, damage):
+    def damage(self, damage, enemy):
         #Set the cooldown to a default value greater than the actual cooldown,
         #This way if self.damageCooldown is false the second if won't throw an error and will execute
         coolDown = 4

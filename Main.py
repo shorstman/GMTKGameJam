@@ -257,10 +257,12 @@ def main():
                     #If the player is within aggro distance of the enemy, run aggro action
                     if(playerDist <= enemy.aggrodist and not enemy.aggro):
                         enemy.aggro = True
-                    if(enemy.aggro):
+                    if(enemy.aggro and (enemy.sprite == "idle" or enemy.sprite == "spin" or enemy.sprite == "aggro")):
                         enemy.aggroAction(player, playerDist)
                         if(playerDist > enemy.aggrodist + 100 and enemy.interruptable):
                             enemy.aggro = False
+                            enemy.sprite = "idle"
+                            enemy.attackMode = False
 
                     #Draw enemy and to kinatmics calculations/check for collisions
                     enemy.time += 1

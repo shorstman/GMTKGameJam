@@ -52,6 +52,7 @@ class Enemy():
             coolDown = int(time.time() - self.damageCooldownTime)
         if(coolDown > 0.1): #Check time elapsed
             #Do damage and start a new cooldown
+            self.aggro = False
             self.health -= damage
             self.damageCooldown = True
             self.damageCooldownTime = time.time()
@@ -118,11 +119,11 @@ class Spinner(Enemy):
         self.sprites["idle"] = []
         for sprite in os.listdir("Hover_Animation"):
             self.sprites["idle"].append(pygame.image.load("Hover_Animation" + dirSymbol + sprite))
-        self.sprites["startup"] = []
+        self.sprites["aggro"] = []
         self.sprites["spin"] = []
         for sprite in os.listdir("Body_Spin_Animation"):
             if("Ready" in sprite):
-                self.sprites["startup"].append(pygame.image.load("Body_Spin_Animation" + dirSymbol + sprite))
+                self.sprites["aggro"].append(pygame.image.load("Body_Spin_Animation" + dirSymbol + sprite))
             else:
                 self.sprites["spin"].append(pygame.image.load("Body_Spin_Animation" + dirSymbol + sprite))
         self.sprites["death"] = []
@@ -140,23 +141,27 @@ class Spinner(Enemy):
             player.damage(20)
 
     def aggroAction(self, player, playerDist):
-        if(not self.attackMode):
+        attackSpeed = 1
+        if(self.sprite == "idle"):
+            self.sprite = "aggro"
+            self.animationFrame = 0
+        if(self.sprite == "aggro" and self.animationFrame == len(self.sprites["aggro"]) - 2):
+            self.animationFrame = len(self.sprites["aggro"]) - 2
+        if(playerDist < 50 and random.randint(1,100) == 1 and not self.attackMode):
+            self.sprite = "spin"
+            self.attackMode = True
+            self.animationFrame = 0
+        if(self.sprite == "spin" and self.animationFrame == len(self.sprites["spin"]) - 1):
+            self.sprite == "aggro"
+            self.animationFrame = 0
             attackSpeed = 1
-            if(playerDist < 50 and random.randint() > 100):
-                self.attackMode = True
-                self.attackTime = 0
-                self.sprite = "startup"
-
-        else:
+        if(self.attackMode):
             attackSpeed = 4
-            if(self.animationFrame == len(self.sprites[self.sprite] - 1)):
-                self.attackTime += 1
-            if(self.attackTime == 3):
-                self.sprite = "spin"
-            if(self.attack == 6):
-                self.attackMode = False
+            attackRect = pygame.Rect(self.rect.x - 16, self.rect.y, 82, 50)
+            if(player.rect.colliderect(attackRect)):
+                player.damage(20, self)
 
-        if(player.rect.x + player.rect.width/2 > self.rect.x + self.rect.width/2):
+        if(player.rect.x > self.rect.x):
             self.moveX(attackSpeed)
         else:
             self.moveX(-attackSpeed)
