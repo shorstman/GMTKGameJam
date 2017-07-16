@@ -283,6 +283,7 @@ def main():
             for obstacle in obstacles:
                 if(obstacle.health <= 0):
                     del obstacles[obstacles.index(obstacle)]
+                    del level.map[level.map.index(obstacle)]
                 else:
                     obstacle.drawObstacle(window, level)
 
