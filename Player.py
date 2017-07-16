@@ -78,7 +78,7 @@ class Player():
                     self.worldX = collider.rect.left + level.x
                 elif self.dx < 0:
                     self.rect.left = collider.rect.right
-                    self.worldX = collider.rect.right + self.rect.width + level.x
+                    self.worldX = collider.rect.right + level.x
                 if self.dy > 0:
                     #If the player is on top of an obstacle, set onGround to True
                     self.onGround = True
