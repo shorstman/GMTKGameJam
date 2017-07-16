@@ -3,14 +3,10 @@ As the player moves, we aren't really drawing the map around them, but rather a 
 So what we really want is to determine the relative coordinates of all objects and draw them at those relative coordinates IFF the relative coordinates
 are contained within the screen area, determined by (playerX-screenWidth/2,playerY+screenHeight/2),(playerX+screenWidth/2,playerY-screenHeight/2)
     These are the top left and right bottom corners respectively.
-
 Actually I want to make it so that the player can move around a preset area, but when they move outside of that area, it shifts the map.
 The area will be predefined by the above formula minus some constant so that we have a border
-
 So
-
 if player.x > sc
-
 """
 import pygame
 from Obstacle import *
@@ -33,16 +29,19 @@ class Map():
         self.setBounds()
 
 
-    def inBounds(self, x, y):
+    def inBounds(self, player):
         """
         Returns 0 if the player is in bounds. Returns 1 if the player is out of bounds and the map has to be redrawn.
         """
         playerIn = True
-        if (x > self.xMax - self.x):  # Detect if the player is out of bounds and reset the origin if they are
-            self.x = x - 700#self.viewXPadding - (self.xMax - self.xMin)
+        print(player.rect.x)
+        print(player.worldX)
+        print(self.x)
+        if (player.rect.x >= self.xMax - self.x):  # Detect if the player is out of bounds and reset the origin if they are
+            self.x = player.worldX - 700#self.viewXPadding - (self.xMax - self.xMin)
             playerIn = False
-        if (x < self.xMin - self.x):
-            self.x = x - self.viewXPadding
+        if (player.rect.x < self.xMin - self.x):
+            self.x = player.worldX - self.viewXPadding
             playerIn  = False
         """
         if(y > self.yMax - self.y):

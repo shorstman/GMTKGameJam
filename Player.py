@@ -8,6 +8,8 @@ class Player():
         self.rect = pygame.Rect(x, y, 34, 64)
         self.dx = 0
         self.dy = 0
+        self.worldX = x
+        self.worldY = y
         self.onGround = False
         self.orientation = 1
         self.time = 0
@@ -22,19 +24,21 @@ class Player():
         self.smallAttackFrame = 0
         self.jumpFrame = 0
 
-    def moveX(self, distance):
+    def moveX(self, distance, level):
         #Move 'distance' in the x direction
         self.dx = distance
-        self.rect.x += self.dx
+        self.rect.x += self.dx - level.x
+        self.worldX += self.dx
         if(self.rect.x > 928 +- self.rect.width):
             self.rect.x = 928 - self.rect.width
         if(self.rect.x < 0):
             self.rect.x = 0
 
-    def moveY(self, distance):
+    def moveY(self, distance, level):
         #Do kinematics calculations for gravity
         self.dy = -distance + 0.02*self.time
-        self.rect.y += self.dy
+        self.worldY += self.dy
+        self.rect.y += self.dy - level.y
         self.onGround = False
 
     def damage(self, damage):

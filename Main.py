@@ -180,11 +180,11 @@ def main():
             if keys[pygame.K_LEFT]:
                 player.sprite = "left"
                 player.orientation = -1
-                player.moveX(-1)
+                player.moveX(-1, level)
             if keys[pygame.K_RIGHT]:
                 player.sprite = "right"
                 player.orientation = 1
-                player.moveX(1)
+                player.moveX(1, level)
 
             #Check collisions on x axis
             player.checkObstacleCollisions(obstacles)
@@ -193,15 +193,14 @@ def main():
             if keys[pygame.K_UP]:
                 if(player.onGround):
                     player.jumping = 2
-                    player.moveY(player.jumping)
-            player.moveY(player.jumping)
+                    player.moveY(player.jumping, level)
+            player.moveY(player.jumping, level)
 
             #Check collisions on y axis
             player.checkObstacleCollisions(obstacles)
 
-            if(not level.inBounds(player.rect.x, player.rect.y)): # Check if the player is in bounds every loop
+            if(not level.inBounds(player)): # Check if the player is in bounds every loop
                 obstacles = level.getObjectList() # If the player is out of bounds, update the obstacles
-
             for enemy in enemies:
                 #Check if player is on the ground for jump attack
                 if(not player.onGround):
