@@ -22,6 +22,7 @@ class Player():
         self.sprite = "idle"
         self.hoverSprite = 1
         self.smallAttackFrame = 0
+        self.strongAttackFrame = 0
         self.jumpFrame = 0
 
     def updatePos(self, xOffset, yOffset):
@@ -105,3 +106,8 @@ class Player():
         while int(self.smallAttackFrame) < len(self.sprites["leftSmallAttack"]):
             self.smallAttackFrame += .0004
         self.smallAttackFrame = 0
+
+    def strongAttack(self):
+        while int(self.strongAttackFrame) < len(self.sprites["leftStrongAttack"]):
+            self.strongAttackFrame += .0004
+        self.strongAttackFrame = 0

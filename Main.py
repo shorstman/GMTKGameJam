@@ -35,6 +35,11 @@ def loadPlayerSprites():
     for sprite in range(1, len(os.listdir("Attack_Basic")) + 1):
         sprites["rightSmallAttack"].append(pygame.image.load("Attack_Basic" +dirSymbol + "Atk_Base" + str(sprite) + ".png"))
         sprites["leftSmallAttack"].append(pygame.transform.flip(pygame.image.load("Attack_Basic" +dirSymbol + "Atk_Base" + str(sprite) + ".png"), True, False))
+    sprites["leftStrongAttack"] = []
+    sprites["rightStrongAttack"] = []
+    for sprite in range(1, len(os.listdir("Attack_Strong")) - 1):
+        sprites["rightStrongAttack"].append(pygame.image.load("Attack_Strong" +dirSymbol + "Player_Strong_Attack_" + str(sprite) + ".png"))
+        sprites["leftStrongAttack"].append(pygame.transform.flip(pygame.image.load("Attack_Strong" +dirSymbol + "Player_Strong_Attack_" + str(sprite) + ".png"), True, False))
     sprites["jump"] = []
     for sprite in os.listdir("Jump"):
         sprites["jump"].append(pygame.image.load("Jump" + dirSymbol + sprite))
@@ -53,6 +58,18 @@ def playerAttackAnimation(window, player):
             window.blit(player.sprites["leftSmallAttack"][int(player.smallAttackFrame)], (player.rect.x - 38, player.rect.y))
     else:
         player.smallAttackFrame = 0
+
+def playerStrongAttackAnimation(window, player):
+    if(player.strongAttackFrame > 0 and player.strongAttackFrame < len(player.sprites["rightStrongAttack"]) - .7):
+        player.strongAttackFrame += .7
+        if(player.orientation == 1):
+            player.sprite = "right"
+            window.blit(player.sprites["rightStrongAttack"][int(player.strongAttackFrame)], (player.rect.x, player.rect.y))
+        else:
+            player.sprite = "left"
+            window.blit(player.sprites["leftStrongAttack"][int(player.strongAttackFrame)], (player.rect.x - 38, player.rect.y))
+    else:
+        player.strongAttackFrame = 0
 
 def main():
     #Initialize the window
@@ -172,6 +189,13 @@ def main():
                                         attackRect.x = obstacle.rect.x
                                         attackRect.width -= difference
 
+                        player.strongAttackFrame = 1
+                        # for enemy in enemies:
+                        #     #If an enemy is in range call strongAttack from the player
+                        #     if(enemy.rect.colliderect(attackRect)):
+                        #         enemy.damage(30, player)
+
+
                     # If the c key is pressed
                     if event.key == pygame.K_c:
                         print("player X = " + str(player.rect.x))
@@ -266,6 +290,7 @@ def main():
                 player.jumping = 0
 
             playerAttackAnimation(window, player)
+            playerStrongAttackAnimation(window, player)
 
             #Do vulnerability increase/decay calculations
             if(player.vulnerable):
@@ -283,6 +308,7 @@ def main():
             for obstacle in obstacles:
                 if(obstacle.health <= 0):
                     del obstacles[obstacles.index(obstacle)]
+                    del level.map[level.map.index(obstacle)]
                 else:
                     obstacle.drawObstacle(window, level)
 
