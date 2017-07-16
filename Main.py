@@ -71,14 +71,19 @@ def main():
 
     activeInterface = "game"
     menu = []
-    menu.append(UIElement(100, 100, 100, 100, "game"))
+    menu.append(UIElement(100, 100, 100, 100, "game", "Return"))
 
     pauseMenu = []
-    pauseMenu.append(UIElement(100, 100, 50, 100, "game"))
-    pauseMenu.append(UIElement(100, 200, 50, 100, "menu"))
+    pauseMenu.append(UIElement(100, 100, 50, 100, "game", "Return"))
+    pauseMenu.append(UIElement(100, 200, 50, 100, "menu", "Menu"))
     #Create the player object
     player = Player(500, 300)
     player.sprites = loadPlayerSprites()
+
+    pauseBg = pygame.Surface((screenWidth,screenHeight))
+    pauseBg.set_alpha(1)
+    pauseBg.fill((255, 255, 255))
+    bgCtr = 0;
 
     enemies = []
     """
@@ -101,11 +106,15 @@ def main():
                     for element in menu:
                         if(element.rect.collidepoint(mousePos)):
                             activeInterface = element.clicked()
-
             window.blit(background, (0,0))
             for element in menu:
                 element.drawElement(window)
+
         elif(activeInterface == "pause"):
+            if (bgCtr < 100):
+                window.blit(pauseBg, (0,0))
+                bgCtr+= 1
+
             for event in pygame.event.get():
                 if event.type == QUIT:
                     return
@@ -114,9 +123,10 @@ def main():
                     for element in pauseMenu:
                         if(element.rect.collidepoint(mousePos)):
                             activeInterface = element.clicked()
-            window.blit(background, (0,0))
+
             for element in pauseMenu:
                 element.drawElement(window)
+
         elif(activeInterface == "game"):
             player.time += 1
             player.sprite = "idle"
@@ -127,7 +137,9 @@ def main():
                     return
                 if event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_ESCAPE:
+                        bgCtr = 0;
                         activeInterface = "pause"
+
                     #Check if the z key is pressed
                     if event.key == pygame.K_z:
                         if(player.orientation == 1):
@@ -204,7 +216,7 @@ def main():
             #Check collisions on y axis
             player.updatePos(level.x, level.y)
             player.checkObstacleCollisions(obstacles, level)
-            
+
             for enemy in enemies:
                 #Check if player is on the ground for jump attack
                 if(not player.onGround):
@@ -216,29 +228,27 @@ def main():
                         enemy.damage(30, player)
 
                 #If the enemy has zero health, remove it
-                if(enemy.health <= 0):
-                    enemy.kill()
-                else:
-                    #Get the distance between the enemy and the player
-                    playerDist = math.sqrt(math.pow(player.rect.x - enemy.rect.x, 2)
-                                            + math.pow(player.rect.y - enemy.rect.y, 2))
 
-                    #If the player is within aggro distance of the enemy, run aggro action
-                    if(playerDist <= enemy.aggrodist and not enemy.aggro):
-                        enemy.aggroAction(player)
-                        enemy.aggro = True
-                    if(enemy.aggro):
-                        enemy.aggroAction(player)
-                        if(playerDist > enemy.aggrodist + 100 and enemy.interruptable):
-                            enemy.aggro = False
+                #Get the distance between the enemy and the player
+                playerDist = math.sqrt(math.pow(player.rect.x - enemy.rect.x, 2)
+                                        + math.pow(player.rect.y - enemy.rect.y, 2))
 
-                    #Draw enemy and to kinatmics calculations/check for collisions
-                    enemy.time += 1
-                    enemy.moveY(0)
-                    enemy.checkObstacleCollisions(obstacles)
-                    if(enemy.onGround):
-                        enemy.time = 0
-                    enemy.drawEnemy(window)
+                #If the player is within aggro distance of the enemy, run aggro action
+                if(playerDist <= enemy.aggrodist and not enemy.aggro):
+                    enemy.aggroAction(player)
+                    enemy.aggro = True
+                if(enemy.aggro):
+                    enemy.aggroAction(player)
+                    if(playerDist > enemy.aggrodist + 100 and enemy.interruptable):
+                        enemy.aggro = False
+
+                #Draw enemy and to kinatmics calculations/check for collisions
+                enemy.time += 1
+                enemy.moveY(0)
+                enemy.checkObstacleCollisions(obstacles)
+                if(enemy.onGround):
+                    enemy.time = 0
+                enemy.drawEnemy(window)
 
 
             if(player.jumping > 0):
