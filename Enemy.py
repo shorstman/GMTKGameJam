@@ -1,6 +1,7 @@
 import pygame
 import time
 import os
+import random
 from _thread import start_new_thread
 
 class Enemy():
@@ -108,6 +109,8 @@ class Spinner(Enemy):
         self.animation = time.time()
         self.animationFrame = 0
         self.sprite = "idle"
+        self.attackMode = False
+        self.attackTime = 0
 
     def loadSprites(self, dirSymbol):
         os.chdir("sprites" + dirSymbol + "Spinner_Sprites")
@@ -115,19 +118,13 @@ class Spinner(Enemy):
         self.sprites["idle"] = []
         for sprite in os.listdir("Hover_Animation"):
             self.sprites["idle"].append(pygame.image.load("Hover_Animation" + dirSymbol + sprite))
-        self.sprites["body-startup"] = []
-        self.sprites["body-spin"] = []
+        self.sprites["startup"] = []
+        self.sprites["spin"] = []
         for sprite in os.listdir("Body_Spin_Animation"):
             if("Ready" in sprite):
-                self.sprites["body-startup"].append(pygame.image.load("Body_Spin_Animation" + dirSymbol + sprite))
+                self.sprites["startup"].append(pygame.image.load("Body_Spin_Animation" + dirSymbol + sprite))
             else:
-                self.sprites["body-spin"].append(pygame.image.load("Body_Spin_Animation" + dirSymbol + sprite))
-        self.sprites["flame-startup"] = []
-        for sprite in os.listdir("Flame_Initiate_Animation"):
-            self.sprites["flame-startup"].append(pygame.image.load("Flame_Initiate_Animation" + dirSymbol + sprite))
-        self.sprites["flame-spin"] = []
-        for sprite in os.listdir("Flame_Spin_Animation"):
-            self.sprites["flame-spin"].append(pygame.image.load("Flame_Spin_Animation" + dirSymbol + sprite))
+                self.sprites["spin"].append(pygame.image.load("Body_Spin_Animation" + dirSymbol + sprite))
         self.sprites["death"] = []
         for sprite in range(1, len(os.listdir("Death_Animation")) + 1):
             self.sprites["death"].append(pygame.image.load("Death_Animation" + dirSymbol + "Death_Animation_" + str(sprite) + ".png"))
@@ -137,5 +134,29 @@ class Spinner(Enemy):
         os.chdir("..")
         os.chdir("..")
 
-    def aggroAction(self, player):
-        pass
+    def attack(self, player):
+        attackRect = pygame.Rect(self.x - 16, self.y, 82, 50)
+        if(player.rect.colliderect(attackRect)):
+            player.damage(20)
+
+    def aggroAction(self, player, playerDist):
+        if(not self.attackMode):
+            attackSpeed = 1
+            if(playerDist < 50 and random.randint() > 100):
+                self.attackMode = True
+                self.attackTime = 0
+                self.sprite = "startup"
+
+        else:
+            attackSpeed = 4
+            if(self.animationFrame == len(self.sprites[self.sprite] - 1)):
+                self.attackTime += 1
+            if(self.attackTime == 3):
+                self.sprite = "spin"
+            if(self.attack == 6):
+                self.attackMode = False
+
+        if(player.rect.x + player.rect.width/2 > self.rect.x + self.rect.width/2):
+            self.moveX(attackSpeed)
+        else:
+            self.moveX(-attackSpeed)
