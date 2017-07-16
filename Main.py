@@ -204,7 +204,7 @@ def main():
             #Check collisions on y axis
             player.updatePos(level.x, level.y)
             player.checkObstacleCollisions(obstacles, level)
-
+            
             for enemy in enemies:
                 #Check if player is on the ground for jump attack
                 if(not player.onGround):
