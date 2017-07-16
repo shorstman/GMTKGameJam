@@ -37,3 +37,7 @@ class Unbreakable(Obstacle):
     #Override the damage function to do nothing
     def damage(self, damage):
         pass
+
+    def drawObstacle(self, window, level):
+        pygame.draw.rect(window, (100, 100, 100), self.rect)
+        pygame.draw.rect(window, (32, 32, 32), self.rect, 3)
