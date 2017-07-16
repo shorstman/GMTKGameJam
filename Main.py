@@ -175,6 +175,8 @@ def main():
                         print("yMin = " + str(level.yMin - level.y))
 
             if(not level.inBounds(player)): # Check if the player is in bounds every loop
+                player.updatePos(level.x, level.y)
+                level.setBounds()
                 obstacles = level.getObjectList() # If the player is out of bounds, update the obstacles
 
             keys = pygame.key.get_pressed()
@@ -189,12 +191,8 @@ def main():
                 player.moveX(1)
 
             #Check collisions on x axis
-            print()
-            print(player.rect.x)
             player.updatePos(level.x, level.y)
-            print(player.rect.x)
             player.checkObstacleCollisions(obstacles, level)
-            print(player.rect.x)
 
             #Jump
             if keys[pygame.K_UP]:

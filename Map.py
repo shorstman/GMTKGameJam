@@ -25,14 +25,8 @@ class Map():
         self.boolMap = GenerateMap(64, 128, 46, 3, 4, 2)
         self.localMap = []
         self.map = self.boolMap.map
-        """
-        self.map = []
-        for x in range(0, 30):
-            self.map.append(Obstacle(64*x, 400, 64, 64, 40))
-        """
         self.mapObjects = []
         self.setBounds()
-
 
     def inBounds(self, player):
         """
@@ -51,9 +45,6 @@ class Map():
         if(player.rect.y < self.yMin - self.y):
             self.y = player.worldY - self.viewYPadding
             playerIn = False
-        if(not playerIn):
-            player.updatePos(self.x, self.y)
-            self.setBounds()
         return playerIn
 
     def getLocalMapSubset(self):
@@ -63,10 +54,10 @@ class Map():
         localXMap = []
         self.localMap = []
         for i in range(0, len(self.map)): # Iterate through all map values
-            if((self.map[i].rect.x > self.x) and (self.map[i].rect.x < self.x + self.sw)): # If any given map value is within the user's FOV X bounds;
+            if((self.map[i].worldX > self.x - 64) and (self.map[i].worldX < self.x + self.sw + 64)): # If any given map value is within the user's FOV X bounds;
                 localXMap.append(self.map[i]) # Add that value to localXMap
         for i in range(0, len(localXMap)): # Iterate through all localXMap values
-            if((localXMap[i].rect.y > self.y and localXMap[i].rect.y < self.y + self.sh)): # If any given localXMap value is within the user's FOV Y bounds;
+            if((localXMap[i].worldY > self.y - 64 and localXMap[i].worldY < self.y + self.sh + 64)): # If any given localXMap value is within the user's FOV Y bounds;
                 self.localMap.append(localXMap[i]) # Add that value to localMap
         for i in range(0, len(self.localMap)):
             self.mapObjects.append(self.localMap[i]) # Obstacle(x,y,w,h)
