@@ -64,9 +64,9 @@ class GenerateMap():
 
     def generateMap(self):
         cellMap = []
-        cellMap = initializeMap(cellMap)
+        cellMap = self.initializeMap(cellMap)
         for step in range(0, self.steps):
-            cellMap = doStep(cellMap)
+            cellMap = self.doStep(cellMap)
 
         #Add a border around the map
         for x in range(0, len(cellMap)):
