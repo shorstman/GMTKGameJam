@@ -1,6 +1,7 @@
 import pygame
 import time
 import os
+from _thread import start_new_thread
 
 class Enemy():
     def __init__(self, x, y, width, height, aggrodist, speed):
@@ -58,13 +59,12 @@ class Enemy():
             else:
                 self.moveX(10)
             self.moveY(3)
-
-            if(self.health <= 0):
-                del self
-
-    def drawEnemy(self, window):
-        #Draw the player
-        pygame.draw.rect(window, self.color, self.rect)
+            self.animation = time.time()
+            self.animationFrame = 0
+            if(self.health > 0):
+                self.sprite = "damage"
+            else:
+                self.sprite = "death"
 
     def checkObstacleCollisions(self, colliders, level):
         """
@@ -93,61 +93,23 @@ class Enemy():
         self.dx = 0
         self.dy = 0
 
-class Chomper(Enemy):
-    """
-    This class inherits the functions from the enemy class. It is an enemy type
-    that will wait for three seconds and then charge the player.
-    """
-    def __init__(self, x, y):
-        self.health = 100
-        self.rect = pygame.Rect(x, y, 64, 64)
-        self.dx = 0
-        self.dy = 0
-        self.speed = 5
-        self.orientation = 1
-        self.onGround = False
-        self.orientation = 1;
-        self.time = 0
-        self.aggrodist = 100
-        self.aggro = False
-        self.chargeStart = time.time()
-        self.startX = 0
-        self.color = (255, 0, 0)
-        self.damageCooldown = False
-        self.interruptable = True
-
-    def aggroAction(self, player):
-        """
-        This is triggered when the player enters the aggro distance of the enemy
-        """
-        #TODO: Make the directionality of this more complex once we have sprites for this
-        #Calculate how long it has been since the start time
-        currentTime = int(time.time() - self.chargeStart)
-        if(not self.aggro):
-            #Get the start time to calculate 3 seconds
-            self.chargeStart = time.time()
-            self.interruptable = False
-        if(currentTime == 0):
-            #Find the direction the player is in
-            if(player.rect.x > self.rect.x):
-                self.orientation = 1
-            else:
-                self.orientation = -1
-            #Get the starting x value so always charges the same distance
-            self.startX = self.rect.x
-        if(currentTime >= 3): #If it has been three seconds
-            #Add the speed
-            self.moveX(self.speed*self.orientation)
-            #If it reaches 300 pixels from the starting point, stop
-            if(abs(self.rect.x - self.startX) > 150):
-                self.chargeStart = time.time()
-                self.interruptable = True
-                self.aggro = False
+    def drawEnemy(self, window):
+        window.blit(self.sprites[self.sprite][self.animationFrame], (self.rect.x, self.rect.y))
+        if(self.animationFrame == len(self.sprites[self.sprite]) - 1 and self.sprite == "damage"):
+            self.sprite = "idle"
+            self.animationFrame = 0
+        if(self.animationFrame == len(self.sprites[self.sprite]) - 1 and self.sprite == "death"):
+            pass
+    def kill(self):
+        del self
 
 class Spinner(Enemy):
     def __init__(self, x, y, width, height, aggrodist, speed):
-        super(Spinner, self).__init__(self, x, y, width, height, aggrodist, speed)
+        super(Spinner, self).__init__(x, y, width, height, aggrodist, speed)
         self.sprites = {}
+        self.animation = time.time()
+        self.animationFrame = 0
+        self.sprite = "idle"
 
     def loadSprites(self, dirSymbol):
         os.chdir("sprites" + dirSymbol + "Spinner_Sprites")
@@ -166,5 +128,16 @@ class Spinner(Enemy):
         for sprite in os.listdir("Flame_Initiate_Animation"):
             self.sprites["flame-startup"].append(pygame.image.load("Flame_Initiate_Animation" + dirSymbol + sprite))
         self.sprites["flame-spin"] = []
-        for sprite ein os.listdir("Flame_Spin_Animation"):
+        for sprite in os.listdir("Flame_Spin_Animation"):
             self.sprites["flame-spin"].append(pygame.image.load("Flame_Spin_Animation" + dirSymbol + sprite))
+        self.sprites["death"] = []
+        for sprite in range(1, len(os.listdir("Death_Animation")) + 1):
+            self.sprites["death"].append(pygame.image.load("Death_Animation" + dirSymbol + "Death_Animation_" + str(sprite) + ".png"))
+        self.sprites["damage"] = []
+        for sprite in os.listdir("Hurt_Animation"):
+            self.sprites["damage"].append(pygame.image.load("Hurt_Animation" + dirSymbol + sprite))
+        os.chdir("..")
+        os.chdir("..")
+
+    def aggroAction(self, player):
+        pass

@@ -75,7 +75,7 @@ class Player():
             if self.rect.colliderect(collider.rect):
                 if self.dx > 0:
                     self.rect.right = collider.rect.left
-                    self.worldX = collider.rect.left + level.x
+                    self.worldX = collider.rect.left - self.rect.width + level.x
                 elif self.dx < 0:
                     self.rect.left = collider.rect.right
                     self.worldX = collider.rect.right + level.x
