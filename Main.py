@@ -101,17 +101,20 @@ def main():
     pauseBg.fill((255, 255, 255))
     bgCtr = 0;
 
-    enemies = []
     #Create enemies
-    enemies = []
-    for x in range(1, 2):
-        enemies.append(Spinner(x*300, 200, 50, 50, 100, 3))
+    # enemies = []
+    # for x in range(1, 2):
+    #     enemies.append(Spinner(x*300, 200, 50, 50, 100, 3))
 
-    for enemy in enemies:
-        enemy.loadSprites(dirSymbol)
+
+
     # Create map object
     level = Map(screenWidth,screenHeight, viewXPadding, viewYPadding)
     obstacles = level.getObjectList() # If the player is out of bounds, update the obstacles
+    enemies = level.enemies
+    for enemy in enemies:
+        enemy.loadSprites(dirSymbol)
+
 
     while True:
         if(activeInterface == "menu"):
