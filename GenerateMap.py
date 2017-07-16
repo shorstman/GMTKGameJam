@@ -1,3 +1,6 @@
+import random
+import copy
+from Obstacle import *
 
 class GenerateMap():
     def __init__(self, width, height, aliveStart, deathLimit, birthLimit, steps):
@@ -16,7 +19,9 @@ class GenerateMap():
         self.deathLimit = deathLimit
         self.birthLimit = birthLimit
         self.steps = steps
-        self.map = self.generateMap()
+        self.boolMap = self.generateMap()
+        self.map = []
+        self.convertMap()
 
     def initializeMap(self, cellMap):
         for x in range(0, self.width):
@@ -32,7 +37,7 @@ class GenerateMap():
         newMap = copy.deepcopy(oldMap)
         for x in range(0, len(newMap)):
             for y in range(0, len(newMap[x])):
-                aliveNeighbors = countAliveNeighbors(oldMap, x, y)
+                aliveNeighbors = self.countAliveNeighbors(oldMap, x, y)
                 if(oldMap[x][y]):
                     if(aliveNeighbors < self.deathLimit):
                         newMap[x][y] = False
@@ -81,11 +86,17 @@ class GenerateMap():
                     cellMap[x][y] = False
         return cellMap
 
+    def convertMap(self):
+        for x in range(0, len(self.boolMap)):
+            for y in range(0, len(self.boolMap[x])):
+                if(self.boolMap[x][y]):
+                    self.map.append(Obstacle(x*64, y*64, 64, 64, 40))
+
     def getObstacleCount(self):
         obstacleCount = 0
-        for x in range(0, len(self.map)):
-            for y in range(0, len(self.map[x])):
-                if(self.map[x][y]):
+        for x in range(0, len(self.boolMap)):
+            for y in range(0, len(self.boolMap[x])):
+                if(self.boolMap[x][y]):
                     obstacleCount += 1
 
         return obstacleCount
