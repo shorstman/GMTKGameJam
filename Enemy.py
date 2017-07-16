@@ -49,7 +49,7 @@ class Enemy():
         if(self.damageCooldown):
             #Find the time elapsed since cooldown started
             coolDown = int(time.time() - self.damageCooldownTime)
-        if(coolDown > 1): #Check time elapsed
+        if(coolDown > 0.1): #Check time elapsed
             #Do damage and start a new cooldown
             self.health -= damage
             self.damageCooldown = True
