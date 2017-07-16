@@ -27,6 +27,7 @@ class Map():
         self.map = self.boolMap.map
         self.mapObjects = []
         self.setBounds()
+        self.enemies = self.boolMap.enemies
 
     def inBounds(self, player):
         """

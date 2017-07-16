@@ -1,6 +1,7 @@
 import random
 import copy
 from Obstacle import *
+from Enemy import *
 
 class GenerateMap():
     def __init__(self, width, height, aliveStart, deathLimit, birthLimit, steps):
@@ -21,6 +22,7 @@ class GenerateMap():
         self.steps = steps
         self.boolMap = self.generateMap()
         self.map = []
+        self.enemies = []
         self.convertMap()
 
     def initializeMap(self, cellMap):
@@ -94,6 +96,16 @@ class GenerateMap():
                     self.map.append(Unbreakable(x*64 ,y*64 ,64 ,64 ,100))
                 elif y == len(self.boolMap) - 1:
                     self.map.append(Unbreakable(x*64 ,y*64 ,64 ,64 ,100))
+
+                if((random.randint(1,100) == 5) and (self.boolMap[x][y] == True)):
+                    enemyType = random.randint(1,3)
+                    if(enemyType == 1):
+                        self.enemies.append(Spinner(x, y, 50, 50, 100, 3))
+                        print("Created spinner enemy at " +str(x) +"," +str(y))
+                    # elif(enemyType == 2):
+                    #     self.enemies.append(Chomper(x*300, 200, 50, 50, 100, 3))
+                    # elif(enemyType == 3):
+                    #     self.enemies.append(Bomb(x*300, 200, 50, 50, 100, 3))
 
     def getObstacleCount(self):
         obstacleCount = 0
