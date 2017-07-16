@@ -271,8 +271,8 @@ def main():
                     if(time.time() - enemy.animation >= 0.1):
                         enemy.animationFrame += 1
                         enemy.animation = time.time()
-                        if(enemy.animationFrame >= len(enemy.sprites[enemy.sprite])):
-                            enemy.animationFrame = 0
+                    if(enemy.animationFrame >= len(enemy.sprites[enemy.sprite])):
+                        enemy.animationFrame = 0
                     enemy.drawEnemy(window)
 
             if(player.jumping > 0):
