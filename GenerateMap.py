@@ -73,17 +73,11 @@ class GenerateMap():
         for step in range(0, self.steps):
             cellMap = self.doStep(cellMap)
 
-        #Add a border around the map
-        for x in range(0, len(cellMap)):
-            for y in range(0, len(cellMap[x])):
-                if x == 0:
-                    cellMap[x][y] = False
-                elif x == len(cellMap) - 1:
-                    cellMap[x][y] = False
-                elif y == 0:
-                    cellMap[x][y] = False
-                elif y == len(cellMap[x]) - 1:
-                    cellMap[x][y] = False
+        # Create a spawn area so that the player doesn't spawn on top of the map
+        for x in range(1, 10): # From 1 to 10 X
+            for y in range(1, 5): # From 1 to 10 Y
+                    cellMap[x][y] = True
+
         return cellMap
 
     def convertMap(self):
@@ -91,6 +85,15 @@ class GenerateMap():
             for y in range(0, len(self.boolMap[x])):
                 if(not self.boolMap[x][y]):
                     self.map.append(Obstacle(x*64, y*64, 64, 64, 40))
+                #Add a border around the map
+                if x == 0:
+                    self.map.append(Unbreakable(x*64 ,y*64 ,64 ,64 ,100))
+                elif x == len(self.boolMap) - 1:
+                    self.map.append(Unbreakable(x*64 ,y*64 ,64 ,64 ,100))
+                elif y == 0:
+                    self.map.append(Unbreakable(x*64 ,y*64 ,64 ,64 ,100))
+                elif y == len(self.boolMap) - 1:
+                    self.map.append(Unbreakable(x*64 ,y*64 ,64 ,64 ,100))
 
     def getObstacleCount(self):
         obstacleCount = 0
